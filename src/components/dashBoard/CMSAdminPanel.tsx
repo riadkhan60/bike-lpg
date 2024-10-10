@@ -69,6 +69,7 @@ export default function CMSAdminPanel() {
   const [videoLinks, setVideoLinks] = useState<VideoLink[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [editingItem, setEditingItem] = useState<
     QA | Product | VideoLink | null
   >(null);
@@ -105,6 +106,7 @@ export default function CMSAdminPanel() {
     const answer = (form.elements.namedItem('answer') as HTMLInputElement)
       .value;
     try {
+      setIsSubmitting(true);
       const response = await fetch('/api/cms', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -118,17 +120,20 @@ export default function CMSAdminPanel() {
         title: 'Success',
         description: 'Q&A added successfully',
       });
+      setIsSubmitting(false);
     } catch {
       toast({
         title: 'Error',
         description: `Failed to add Q&A `,
         variant: 'destructive',
       });
+      setIsSubmitting(false);
     }
   };
 
   const handleEditQA = async (qa: QA) => {
     try {
+      setIsEditModalOpen(true);
       const response = await fetch('/api/cms', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -143,17 +148,20 @@ export default function CMSAdminPanel() {
         title: 'Success',
         description: 'Q&A updated successfully',
       });
+      setIsSubmitting(false);
     } catch {
       toast({
         title: 'Error',
         description: 'Failed to update Q&A',
         variant: 'destructive',
       });
+      setIsSubmitting(false);
     }
   };
 
   const handleDeleteQA = async (id: string) => {
     try {
+      setIsSubmitting(true);
       const response = await fetch('/api/cms', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
@@ -165,12 +173,14 @@ export default function CMSAdminPanel() {
         title: 'Success',
         description: 'Q&A deleted successfully',
       });
+      setIsSubmitting(false);
     } catch {
       toast({
         title: 'Error',
         description: 'Failed to delete Q&A',
         variant: 'destructive',
       });
+      setIsSubmitting(false);
     }
   };
 
@@ -183,6 +193,7 @@ export default function CMSAdminPanel() {
       .value;
     const url = (form.elements.namedItem('videoUrl') as HTMLInputElement).value;
     try {
+      setIsSubmitting(true);
       const response = await fetch('/api/cms', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -196,17 +207,20 @@ export default function CMSAdminPanel() {
         title: 'Success',
         description: 'Video link added successfully',
       });
+      setIsSubmitting(false);
     } catch {
       toast({
         title: 'Error',
         description: 'Failed to add video link',
         variant: 'destructive',
       });
+      setIsSubmitting(false);
     }
   };
 
   const handleEditVideoLink = async (videoLink: VideoLink) => {
     try {
+      setIsEditModalOpen(true);
       const response = await fetch('/api/cms', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -229,17 +243,21 @@ export default function CMSAdminPanel() {
         title: 'Success',
         description: 'Video link updated successfully',
       });
+      setIsSubmitting(false);
     } catch {
       toast({
         title: 'Error',
         description: 'Failed to update video link',
         variant: 'destructive',
       });
+      setIsSubmitting(false);
     }
   };
 
   const handleDeleteVideoLink = async (id: string) => {
+  
     try {
+      setIsSubmitting(true);
       const response = await fetch('/api/cms', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
@@ -251,12 +269,14 @@ export default function CMSAdminPanel() {
         title: 'Success',
         description: 'Video link deleted successfully',
       });
+      setIsSubmitting(false);
     } catch {
       toast({
         title: 'Error',
         description: 'Failed to delete video link',
         variant: 'destructive',
       });
+      setIsSubmitting(false);
     }
   };
 
@@ -365,6 +385,7 @@ export default function CMSAdminPanel() {
     ).files?.[0];
 
     try {
+      setIsSubmitting(true);
       let imageUrl = '';
       if (imageFile) {
         imageUrl = await handleImageUpload(imageFile);
@@ -386,17 +407,20 @@ export default function CMSAdminPanel() {
         title: 'Success',
         description: 'Product added successfully',
       });
+      setIsSubmitting(false);
     } catch {
       toast({
         title: 'Error',
         description: 'Failed to add product',
         variant: 'destructive',
       });
+      setIsSubmitting(false);
     }
   };
 
   const handleEditProduct = async (product: Product) => {
     try {
+      setIsSubmitting(true);
       let imageUrl = product.imageUrl;
       if (fileInputRef.current?.files?.[0]) {
         imageUrl = await handleImageUpload(fileInputRef.current.files[0]);
@@ -424,17 +448,20 @@ export default function CMSAdminPanel() {
         title: 'Success',
         description: 'Product updated successfully',
       });
+      setIsSubmitting(false);
     } catch {
       toast({
         title: 'Error',
         description: 'Failed to update product',
         variant: 'destructive',
       });
+      setIsSubmitting(false);
     }
   };
 
   const handleDeleteProduct = async (id: string) => {
     try {
+      setIsSubmitting(true);
       const response = await fetch('/api/cms', {
         method: 'DELETE',
 
@@ -447,12 +474,14 @@ export default function CMSAdminPanel() {
         title: 'Success',
         description: 'Product deleted successfully',
       });
+      setIsSubmitting(false);
     } catch {
       toast({
         title: 'Error',
         description: 'Failed to delete product',
         variant: 'destructive',
       });
+      setIsSubmitting(false);
     }
   };
 
@@ -535,7 +564,7 @@ export default function CMSAdminPanel() {
                       <Textarea id="answer" placeholder="Enter the answer" />
                     </div>
                   </div>
-                  <Button type="submit" className="mt-4">
+                  <Button disabled={isSubmitting} type="submit" className="mt-4">
                     Add Q&A
                   </Button>
                 </form>
@@ -553,6 +582,7 @@ export default function CMSAdminPanel() {
                     <div className="mt-2 flex space-x-2">
                       <Button
                         size="sm"
+                        disabled={isSubmitting}
                         variant="outline"
                         onClick={() => {
                           setEditingItem(qa);
@@ -565,6 +595,7 @@ export default function CMSAdminPanel() {
                       <Button
                         size="sm"
                         variant="outline"
+                        disabled={isSubmitting}
                         onClick={() => handleDeleteQA(qa.id)}
                       >
                         <Trash className="h-4 w-4 mr-2" />
@@ -593,7 +624,7 @@ export default function CMSAdminPanel() {
                       <Input id="videoUrl" placeholder="Enter video URL" />
                     </div>
                   </div>
-                  <Button type="submit" className="mt-4">
+                  <Button disabled={isSubmitting} type="submit" className="mt-4">
                     Add Video Link
                   </Button>
                 </form>
@@ -644,6 +675,7 @@ export default function CMSAdminPanel() {
                                         <MoveDown className="h-4 w-4" />
                                       </Button>
                                       <Button
+                                        disabled={isSubmitting}
                                         size="sm"
                                         variant="outline"
                                         onClick={() => {
@@ -654,6 +686,7 @@ export default function CMSAdminPanel() {
                                         <Edit className="h-4 w-4" />
                                       </Button>
                                       <Button
+                                        disabled={isSubmitting}
                                         size="sm"
                                         variant="outline"
                                         onClick={() =>
@@ -715,7 +748,7 @@ export default function CMSAdminPanel() {
                       <Input id="productImage" type="file" accept="image/*" />
                     </div>
                   </div>
-                  <Button type="submit" className="mt-4">
+                  <Button disabled={isSubmitting} type="submit" className="mt-4">
                     Add Product
                   </Button>
                 </form>
@@ -744,6 +777,7 @@ export default function CMSAdminPanel() {
                     )}
                     <div className="mt-2 flex space-x-2">
                       <Button
+                        disabled={isSubmitting}
                         size="sm"
                         variant="outline"
                         onClick={() => {
@@ -755,6 +789,7 @@ export default function CMSAdminPanel() {
                         Edit
                       </Button>
                       <Button
+                        disabled={isSubmitting}
                         size="sm"
                         variant="outline"
                         onClick={() => handleDeleteProduct(product.id)}
@@ -926,8 +961,8 @@ export default function CMSAdminPanel() {
                   </div>
                 </>
               )}
-              <DialogFooter>
-                <Button type="submit">Save changes</Button>
+              <DialogFooter className="mt-4">
+                <Button disabled={isSubmitting} type="submit">Save changes</Button>
               </DialogFooter>
             </form>
           )}
