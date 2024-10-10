@@ -10,7 +10,7 @@ export async function GET() {
     const products = await prisma.product.findMany();
 
     return NextResponse.json({ qas, videoLinks, products });
-  } catch (error) {
+  } catch  {
     return NextResponse.json(
       { error: 'Failed to fetch data' },
       { status: 500 },
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json(result, { status: 201 });
-  } catch (error) {
+  } catch  {
     return NextResponse.json(
       { error: 'Failed to create record' },
       { status: 500 },
@@ -72,7 +72,7 @@ export async function PUT(request: NextRequest) {
     }
 
     return NextResponse.json(result);
-  } catch (error) {
+  } catch  {
     return NextResponse.json(
       { error: 'Failed to update record' },
       { status: 500 },
@@ -100,7 +100,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     return NextResponse.json(result);
-  } catch (error) {
+  } catch  {
     return NextResponse.json(
       { error: 'Failed to delete record' },
       { status: 500 },
