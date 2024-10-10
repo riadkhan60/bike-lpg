@@ -63,8 +63,6 @@ interface Product {
   imageUrl: string;
 }
 
-
-
 export default function CMSAdminPanel() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [qas, setQAs] = useState<QA[]>([]);
@@ -89,10 +87,10 @@ export default function CMSAdminPanel() {
       setQAs(data.qas);
       setVideoLinks(data.videoLinks);
       setProducts(data.products);
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
-        description: 'Failed to fetch data',
+        description: `Failed to fetch data`,
         variant: 'destructive',
       });
     }
@@ -120,10 +118,10 @@ export default function CMSAdminPanel() {
         title: 'Success',
         description: 'Q&A added successfully',
       });
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
-        description: 'Failed to add Q&A',
+        description: `Failed to add Q&A `,
         variant: 'destructive',
       });
     }
@@ -145,7 +143,7 @@ export default function CMSAdminPanel() {
         title: 'Success',
         description: 'Q&A updated successfully',
       });
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to update Q&A',
@@ -167,7 +165,7 @@ export default function CMSAdminPanel() {
         title: 'Success',
         description: 'Q&A deleted successfully',
       });
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to delete Q&A',
@@ -198,7 +196,7 @@ export default function CMSAdminPanel() {
         title: 'Success',
         description: 'Video link added successfully',
       });
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to add video link',
@@ -231,7 +229,7 @@ export default function CMSAdminPanel() {
         title: 'Success',
         description: 'Video link updated successfully',
       });
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to update video link',
@@ -253,7 +251,7 @@ export default function CMSAdminPanel() {
         title: 'Success',
         description: 'Video link deleted successfully',
       });
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to delete video link',
@@ -288,7 +286,7 @@ export default function CMSAdminPanel() {
           ),
         );
         setVideoLinks(newLinks);
-      } catch (error) {
+      } catch {
         toast({
           title: 'Error',
           description: 'Failed to reorder video links',
@@ -298,10 +296,7 @@ export default function CMSAdminPanel() {
     }
   };
 
-  interface DragResult {
-  destination: { index: number };
-  // Add other properties as needed
-}
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onDragEnd = async (result: any) => {
     if (!result.destination) return;
     const items = Array.from(videoLinks);
@@ -323,7 +318,7 @@ export default function CMSAdminPanel() {
         ),
       );
       setVideoLinks(items);
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to reorder video links',
@@ -391,7 +386,7 @@ export default function CMSAdminPanel() {
         title: 'Success',
         description: 'Product added successfully',
       });
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to add product',
@@ -429,7 +424,7 @@ export default function CMSAdminPanel() {
         title: 'Success',
         description: 'Product updated successfully',
       });
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to update product',
@@ -452,7 +447,7 @@ export default function CMSAdminPanel() {
         title: 'Success',
         description: 'Product deleted successfully',
       });
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to delete product',
