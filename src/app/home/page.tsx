@@ -3,7 +3,7 @@ import React from 'react'
 
 export default function home() {
   return (
-    <div>
+    <div className=' mt-20'>
       home
       <div>
         <AuthButton />

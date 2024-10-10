@@ -3,20 +3,22 @@ import { NextRequest, NextResponse } from 'next/server';
 import { writeFile, mkdir } from 'fs/promises';
 import { join, extname } from 'path';
 
+// Remove the deprecated config export
+
 export async function POST(request: NextRequest) {
-  const formData = await request.formData();
-  const file = formData.get('image') as File | null;
-
-  if (!file) {
-    return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
-  }
-
-  const bytes = await file.arrayBuffer();
-  const buffer = Buffer.from(bytes);
-
-  const uploadDir = join(process.cwd(), 'public/uploads');
-
   try {
+    const formData = await request.formData();
+    const file = formData.get('image') as File | null;
+
+    if (!file) {
+      return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
+    }
+
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+
+    const uploadDir = join(process.cwd(), 'public/uploads');
+
     // Create the uploads directory if it doesn't exist
     await mkdir(uploadDir, { recursive: true });
 
@@ -40,8 +42,6 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
+// Add necessary route segment configs
+export const runtime = 'nodejs'; // Required for file system operations
+export const dynamic = 'force-dynamic'; // Prevents caching of the API route

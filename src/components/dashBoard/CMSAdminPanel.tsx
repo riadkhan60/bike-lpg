@@ -6,12 +6,12 @@ import {
   FileQuestion,
   Video,
   Package,
-  Plus,
+  // Plus,
   Edit,
   Trash,
   MoveUp,
   MoveDown,
-  Upload,
+  // Upload,
   Loader2,
 } from 'lucide-react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
@@ -23,7 +23,7 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
+  // CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
@@ -33,11 +33,11 @@ import { toast } from '@/hooks/use-toast';
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
+  // DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
+  // DialogTrigger,
 } from '@/components/ui/dialog';
 import { SignedIn, UserButton } from '@clerk/nextjs';
 import Image from 'next/image';
@@ -62,6 +62,8 @@ interface Product {
   price: number;
   imageUrl: string;
 }
+
+
 
 export default function CMSAdminPanel() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -296,6 +298,10 @@ export default function CMSAdminPanel() {
     }
   };
 
+  interface DragResult {
+  destination: { index: number };
+  // Add other properties as needed
+}
   const onDragEnd = async (result: any) => {
     if (!result.destination) return;
     const items = Array.from(videoLinks);
