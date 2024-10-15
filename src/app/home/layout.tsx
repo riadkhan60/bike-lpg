@@ -1,13 +1,16 @@
 import Navigation from '@/components/Navigation/Navigation';
+import SmoothScroll from '@/components/smoothScroll/SmoothScroll';
 import React from 'react';
 
 export default function layout({ children }: { children: React.ReactNode }) {
   return (
-    <div >
+    <SmoothScroll>
       <div>
-        <Navigation />
+        <div>
+          <Navigation />
+        </div>
+        {children}
       </div>
-      {children}
-    </div>
+    </SmoothScroll>
   );
 }

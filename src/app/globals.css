@@ -77,6 +77,44 @@ body {
   }
 }
 
-.active{
-  color: blue;
+
+
+@layer components {
+  .hover-underline {
+    @apply relative inline-block ;
+  }
+  
+  .hover-underline::after {
+    @apply content-[''] absolute w-0 h-0.5 bg-[#004c4c] left-1/2 bottom-[5px] transition-all duration-300 ease-out;
+  }
+  
+  .hover-underline:hover::after ,
+  .hover-underline.active::after {
+    @apply w-full left-0;
+  }
+
 }
+
+/* Custom Pagination Styles */
+.custom-pagination {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.pagination-button {
+  width: 15px;
+  height: 15px;
+  background-color: transparent;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: all 0.3s ease;
+}
+
+.pagination-button.active {
+  opacity: 1;
+  background-color: #ffffff; /* Active color */
+}
+
