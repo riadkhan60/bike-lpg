@@ -23,6 +23,16 @@ CREATE TABLE "Product" (
     "name" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "price" DOUBLE PRECISION NOT NULL,
+    "imageUrl" TEXT NOT NULL,
 
     CONSTRAINT "Product_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Banner" (
+    "id" TEXT NOT NULL,
+    "largeScreenUrl" TEXT NOT NULL,
+    "smallScreenUrl" TEXT NOT NULL,
+
+    CONSTRAINT "Banner_pkey" PRIMARY KEY ("id")
 );

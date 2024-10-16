@@ -13,6 +13,7 @@ import {
   MoveDown,
   // Upload,
   Loader2,
+  Image as ImageIcon,
 } from 'lucide-react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
@@ -63,6 +64,12 @@ interface Product {
   imageUrl: string;
 }
 
+interface Banner {
+  id: string;
+  largeScreenUrl: string;
+  smallScreenUrl: string;
+}
+
 export default function CMSAdminPanel() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [qas, setQAs] = useState<QA[]>([]);
@@ -71,10 +78,14 @@ export default function CMSAdminPanel() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editingItem, setEditingItem] = useState<
-    QA | Product | VideoLink | null
+    QA | Product | VideoLink | Banner | null
   >(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const largeScreenFileInputRef = useRef<HTMLInputElement>(null);
+  const smallScreenFileInputRef = useRef<HTMLInputElement>(null);
+
+  const [banners, setBanners] = useState<Banner[]>([]);
 
   useEffect(() => {
     fetchData();
@@ -88,6 +99,7 @@ export default function CMSAdminPanel() {
       setQAs(data.qas);
       setVideoLinks(data.videoLinks);
       setProducts(data.products);
+      setBanners(data.banners || []);
     } catch {
       toast({
         title: 'Error',
@@ -97,6 +109,131 @@ export default function CMSAdminPanel() {
     }
     setIsLoading(false);
   };
+
+  // Bannnnerrrrrrrrrrrrrrrrrrrrrrrrrr
+  const handleAddBanner = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const largeScreenFile = (
+      form.elements.namedItem('largeScreenBanner') as HTMLInputElement
+    ).files?.[0];
+    const smallScreenFile = (
+      form.elements.namedItem('smallScreenBanner') as HTMLInputElement
+    ).files?.[0];
+
+    try {
+      setIsSubmitting(true);
+      let largeScreenUrl = '';
+      let smallScreenUrl = '';
+
+      if (largeScreenFile) {
+        largeScreenUrl = await handleImageUpload(largeScreenFile);
+      }
+      if (smallScreenFile) {
+        smallScreenUrl = await handleImageUpload(smallScreenFile);
+      }
+
+      const response = await fetch('/api/cms', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'banner',
+          data: { largeScreenUrl, smallScreenUrl },
+        }),
+      });
+
+      if (!response.ok) throw new Error('Failed to add banner');
+      const newBanner = await response.json();
+      setBanners([...banners, newBanner]);
+      form.reset();
+      toast({
+        title: 'Success',
+        description: 'Banner added successfully',
+      });
+      setIsSubmitting(false);
+    } catch {
+      toast({
+        title: 'Error',
+        description: 'Failed to add banner',
+        variant: 'destructive',
+      });
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleEditBanner = async (banner: Banner) => {
+    try {
+      setIsSubmitting(true);
+      let largeScreenUrl = banner.largeScreenUrl;
+      let smallScreenUrl = banner.smallScreenUrl;
+
+      if (largeScreenFileInputRef.current?.files?.[0]) {
+        largeScreenUrl = await handleImageUpload(
+          largeScreenFileInputRef.current.files[0],
+        );
+      }
+      if (smallScreenFileInputRef.current?.files?.[0]) {
+        smallScreenUrl = await handleImageUpload(
+          smallScreenFileInputRef.current.files[0],
+        );
+      }
+
+      const response = await fetch('/api/cms', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'banner',
+          id: banner.id,
+          data: { largeScreenUrl, smallScreenUrl },
+        }),
+      });
+      if (!response.ok) throw new Error('Failed to update banner');
+      const updatedBanner = await response.json();
+      setBanners(
+        banners.map((item) => (item.id === banner.id ? updatedBanner : item)),
+      );
+      setEditingItem(null);
+      setIsEditModalOpen(false);
+      toast({
+        title: 'Success',
+        description: 'Banner updated successfully',
+      });
+      setIsSubmitting(false);
+    } catch {
+      toast({
+        title: 'Error',
+        description: 'Failed to update banner',
+        variant: 'destructive',
+      });
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDeleteBanner = async (id: string) => {
+    try {
+      setIsSubmitting(true);
+      const response = await fetch('/api/cms', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'banner', id }),
+      });
+      if (!response.ok) throw new Error('Failed to delete banner');
+      setBanners(banners.filter((banner) => banner.id !== id));
+      toast({
+        title: 'Success',
+        description: 'Banner deleted successfully',
+      });
+      setIsSubmitting(false);
+    } catch {
+      toast({
+        title: 'Error',
+        description: 'Failed to delete banner',
+        variant: 'destructive',
+      });
+      setIsSubmitting(false);
+    }
+  };
+  // Bannnnnnerrrrrrrrrrrrrrrrrrrr
 
   const handleAddQA = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -112,6 +249,7 @@ export default function CMSAdminPanel() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ type: 'qa', data: { question, answer } }),
       });
+      
       if (!response.ok) throw new Error('Failed to add Q&A');
       const newQA = await response.json();
       setQAs([...qas, newQA]);
@@ -255,7 +393,6 @@ export default function CMSAdminPanel() {
   };
 
   const handleDeleteVideoLink = async (id: string) => {
-  
     try {
       setIsSubmitting(true);
       const response = await fetch('/api/cms', {
@@ -490,6 +627,7 @@ export default function CMSAdminPanel() {
     { id: 'qa', label: 'Q&A', icon: FileQuestion },
     { id: 'videos', label: 'Videos', icon: Video },
     { id: 'products', label: 'Products', icon: Package },
+    { id: 'banners', label: 'Banners', icon: ImageIcon },
   ];
 
   if (isLoading) {
@@ -564,7 +702,11 @@ export default function CMSAdminPanel() {
                       <Textarea id="answer" placeholder="Enter the answer" />
                     </div>
                   </div>
-                  <Button disabled={isSubmitting} type="submit" className="mt-4">
+                  <Button
+                    disabled={isSubmitting}
+                    type="submit"
+                    className="mt-4"
+                  >
                     Add Q&A
                   </Button>
                 </form>
@@ -624,7 +766,11 @@ export default function CMSAdminPanel() {
                       <Input id="videoUrl" placeholder="Enter video URL" />
                     </div>
                   </div>
-                  <Button disabled={isSubmitting} type="submit" className="mt-4">
+                  <Button
+                    disabled={isSubmitting}
+                    type="submit"
+                    className="mt-4"
+                  >
                     Add Video Link
                   </Button>
                 </form>
@@ -748,7 +894,11 @@ export default function CMSAdminPanel() {
                       <Input id="productImage" type="file" accept="image/*" />
                     </div>
                   </div>
-                  <Button disabled={isSubmitting} type="submit" className="mt-4">
+                  <Button
+                    disabled={isSubmitting}
+                    type="submit"
+                    className="mt-4"
+                  >
                     Add Product
                   </Button>
                 </form>
@@ -803,6 +953,102 @@ export default function CMSAdminPanel() {
               </CardContent>
             </Card>
           </TabsContent>
+          <TabsContent value="banners">
+            <Card>
+              <CardHeader>
+                <CardTitle>Add New Banner</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleAddBanner}>
+                  <div className="grid w-full items-center gap-4">
+                    <div className="flex flex-col space-y-1.5">
+                      <Label htmlFor="largeScreenBanner">
+                        Large Screen Banner
+                      </Label>
+                      <Input
+                        id="largeScreenBanner"
+                        type="file"
+                        accept="image/*"
+                      />
+                    </div>
+                    <div className="flex flex-col space-y-1.5">
+                      <Label htmlFor="smallScreenBanner">
+                        Small Screen Banner
+                      </Label>
+                      <Input
+                        id="smallScreenBanner"
+                        type="file"
+                        accept="image/*"
+                      />
+                    </div>
+                  </div>
+                  <Button
+                    disabled={isSubmitting}
+                    type="submit"
+                    className="mt-4"
+                  >
+                    Add Banner
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+            <Card className="mt-6">
+              <CardHeader>
+                <CardTitle>Existing Banners</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {banners.map((banner, index) => (
+                  <div key={banner.id} className="mb-4 p-4 border rounded">
+                    <h3 className="font-semibold">Banner {index +1}</h3>
+                    <div className="mt-2 grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="font-bold">Large Screen:</p>
+                        <Image
+                          src={banner.largeScreenUrl}
+                          alt="Large Screen Banner"
+                          width={400}
+                          height={200}
+                          className="mt-2 max-w-xs"
+                        />
+                      </div>
+                      <div>
+                        <p className="font-bold">Small Screen:</p>
+                        <Image
+                          src={banner.smallScreenUrl}
+                          alt="Small Screen Banner"
+                          width={200}
+                          height={200}
+                          className="mt-2 max-w-xs"
+                        />
+                      </div>
+                    </div>
+                    <div className="mt-2 flex space-x-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          setEditingItem(banner);
+                          setIsEditModalOpen(true);
+                        }}
+                      >
+                        <Edit className="h-4 w-4 mr-2" />
+                        Edit
+                      </Button>
+                      <Button
+                        disabled={isSubmitting}
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleDeleteBanner(banner.id)}
+                      >
+                        <Trash className="h-4 w-4 mr-2" />
+                        Delete
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          </TabsContent>
         </Tabs>
       </main>
       <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
@@ -815,7 +1061,9 @@ export default function CMSAdminPanel() {
                   ? 'Product'
                   : 'question' in editingItem
                   ? 'Q&A'
-                  : 'Video Link'
+                  : 'title' in editingItem
+                  ? 'Video Link'
+                  : 'Banner'
                 : ''}
             </DialogTitle>
           </DialogHeader>
@@ -827,8 +1075,10 @@ export default function CMSAdminPanel() {
                   handleEditProduct(editingItem as Product);
                 } else if ('question' in editingItem) {
                   handleEditQA(editingItem as QA);
-                } else {
+                } else if ('title' in editingItem) {
                   handleEditVideoLink(editingItem as VideoLink);
+                } else {
+                  handleEditBanner(editingItem as Banner);
                 }
               }}
             >
@@ -929,7 +1179,7 @@ export default function CMSAdminPanel() {
                     </div>
                   </div>
                 </>
-              ) : (
+              ) : 'title' in editingItem ? (
                 <>
                   <div className="grid w-full items-center gap-4">
                     <div className="flex flex-col space-y-1.5">
@@ -960,9 +1210,56 @@ export default function CMSAdminPanel() {
                     </div>
                   </div>
                 </>
+              ) : (
+                <>
+                  <div className="grid w-full items-center gap-4">
+                    <div className="flex flex-col space-y-1.5">
+                      <Label htmlFor="editLargeScreenBanner">
+                        Large Screen Banner
+                      </Label>
+                      <Input
+                        id="editLargeScreenBanner"
+                        type="file"
+                        accept="image/*"
+                        ref={largeScreenFileInputRef}
+                      />
+                      {editingItem.largeScreenUrl && (
+                        <Image
+                          src={editingItem.largeScreenUrl}
+                          alt="Large Screen Banner"
+                          width={400}
+                          height={200}
+                          className="mt-2 max-w-xs"
+                        />
+                      )}
+                    </div>
+                    <div className="flex flex-col space-y-1.5">
+                      <Label htmlFor="editSmallScreenBanner">
+                        Small Screen Banner
+                      </Label>
+                      <Input
+                        id="editSmallScreenBanner"
+                        type="file"
+                        accept="image/*"
+                        ref={smallScreenFileInputRef}
+                      />
+                      {editingItem.smallScreenUrl && (
+                        <Image
+                          src={editingItem.smallScreenUrl}
+                          alt="Small Screen Banner"
+                          width={200}
+                          height={200}
+                          className="mt-2 max-w-xs"
+                        />
+                      )}
+                    </div>
+                  </div>
+                </>
               )}
               <DialogFooter className="mt-4">
-                <Button disabled={isSubmitting} type="submit">Save changes</Button>
+                <Button disabled={isSubmitting} type="submit">
+                  Save changes
+                </Button>
               </DialogFooter>
             </form>
           )}

@@ -7,7 +7,7 @@ export const mobileMenuList = [
   {
     id: 2,
     name: 'Dashboard',
-    path: '/dashboard'
+    path: '/site/dashboard'
   }
 ]
 
@@ -20,12 +20,12 @@ export const desktopMenuListLeft = [
   {
     id: 2,
     name: 'Dashboard',
-    path: '/dashboard'
+    path: '/site/dashboard'
   },
   {
     id: 3,
     name: 'BikeLPG',
-    path: '/bikelpg'
+    path: '/site/bikelpg'
   }
 ]
 
@@ -33,16 +33,16 @@ export const desktopMenuListRight = [
   {
     id: 1,
     name: 'About',
-    path: '/about'
+    path: '/site/about'
   },
   {
     id: 2,
     name: 'Contact',
-    path: '/contact'
+    path: '/site/contact'
   },
   {
     id: 3,
     name: 'Why Us',
-    path: '/why-us'
+    path: '/site/why-us'
   }
 ]

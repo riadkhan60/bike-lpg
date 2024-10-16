@@ -33,3 +33,9 @@ model Product {
   price       Float
   imageUrl    String
 }
+
+model Banner {
+  id              String @id @default(cuid())
+  largeScreenUrl  String
+  smallScreenUrl  String
+}

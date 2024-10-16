@@ -8,8 +8,9 @@ export async function GET() {
       orderBy: { order: 'asc' },
     });
     const products = await prisma.product.findMany();
+    const banners = await prisma.banner.findMany();
 
-    return NextResponse.json({ qas, videoLinks, products });
+    return NextResponse.json({ qas, videoLinks, products, banners });
   } catch  {
     return NextResponse.json(
       { error: 'Failed to fetch data' },
@@ -39,6 +40,9 @@ export async function POST(request: NextRequest) {
       case 'product':
         result = await prisma.product.create({ data });
         break;
+      case 'banner':
+        result = await prisma.banner.create({ data });
+        break;
       default:
         throw new Error('Invalid type');
     }
@@ -67,6 +71,9 @@ export async function PUT(request: NextRequest) {
       case 'product':
         result = await prisma.product.update({ where: { id }, data });
         break;
+      case 'banner':
+        result = await prisma.banner.update({ where: { id }, data });
+        break;
       default:
         throw new Error('Invalid type');
     }
@@ -94,6 +101,9 @@ export async function DELETE(request: NextRequest) {
         break;
       case 'product':
         result = await prisma.product.delete({ where: { id } });
+        break;
+      case 'banner':
+        result = await prisma.banner.delete({ where: { id } });
         break;
       default:
         throw new Error('Invalid type');

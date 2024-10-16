@@ -10,7 +10,11 @@ interface ImageSlide {
   alt: string;
   mobile?: string;
 }
-
+interface Banner {
+  id: string;
+  largeScreenUrl: string;
+  smallScreenUrl: string;
+}
 interface ComponentSlide {
   type: 'component';
   content: React.ReactNode;
@@ -19,7 +23,7 @@ interface ComponentSlide {
 type Slide = ImageSlide | ComponentSlide;
 
 // Slider data
-const slidesData: Slide[] = [
+const initialSlides: Slide[] = [
   {
     type: 'component',
     content: (
@@ -28,23 +32,33 @@ const slidesData: Slide[] = [
       </div>
     ),
   },
-  {
-    type: 'image',
-    src: '/d.png',
-    alt: 'Nature 5',
-    mobile: '/d-mobile.png',
-  },
-  {
-    type: 'image',
-    src: '/i.png',
-    alt: 'Nature 5',
-    mobile: '/i-mobile.png',
-  },
 ];
 
 const SwiperContainer: React.FC = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
+  const [slides, setSlides] = useState<Slide[]>(initialSlides); // Use initialSlides instead of slidesData
+
+ console.log(slides);
+  useEffect(() => {
+    async function fetchData() {
+      const response = await fetch('/api/cms');
+      const data = await response.json();
+
+      
+      const newSlides = data.banners.map((banner: Banner) => ({
+        type: 'image',
+        src: banner.largeScreenUrl,
+        alt: 'banner',
+        mobile: banner.smallScreenUrl,
+      }));
+
+      
+      setSlides((prevSlides) => [...prevSlides, ...newSlides]); // Append new slides to initialSlides
+    }
+
+    fetchData();
+  }, []);
 
   useEffect(() => {
     const handleResize = () => {
@@ -65,16 +79,16 @@ const SwiperContainer: React.FC = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      goToSlide((activeIndex + 1) % slidesData.length);
+      goToSlide((activeIndex + 1) % slides.length);
     }, 10000);
 
     return () => clearInterval(interval);
-  }, [activeIndex]);
+  }, [activeIndex, slides.length]); // Make sure the interval depends on `slides.length`
 
   const renderPaginationButtons = () => {
     return (
       <div className="custom-pagination">
-        {slidesData.map((_, index) => (
+        {slides.map((_, index) => (
           <button
             key={index}
             className={clsx('pagination-button', {
@@ -108,21 +122,26 @@ const SwiperContainer: React.FC = () => {
   return (
     <div className="relative w-full h-[366px] md:h-[454px] lg:h-[537px] xl:h-[650px]">
       <div className="relative w-full h-full overflow-hidden">
-        {slidesData.map((slide, index) => (
-          <div
-            key={index}
-            className={clsx(
-              'absolute top-0 left-0 w-full h-full transition-opacity duration-1000 ease-in-out',
-              {
-                'opacity-0': index !== activeIndex,
-                'opacity-100': index === activeIndex,
-              },
-            )}
-            style={{ zIndex: index === activeIndex ? 1 : 0 }}
-          >
-            {renderSlideContent(slide)}
-          </div>
-        ))}
+        {slides.map(
+          (
+            slide,
+            index, // Use `slides` here instead of `slidesData`
+          ) => (
+            <div
+              key={index}
+              className={clsx(
+                'absolute top-0 left-0 w-full h-full transition-opacity duration-1000 ease-in-out',
+                {
+                  'opacity-0': index !== activeIndex,
+                  'opacity-100': index === activeIndex,
+                },
+              )}
+              style={{ zIndex: index === activeIndex ? 1 : 0 }}
+            >
+              {renderSlideContent(slide)}
+            </div>
+          ),
+        )}
       </div>
 
       <div className="absolute bottom-[10px] right-[10px] z-10">
