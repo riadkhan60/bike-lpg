@@ -90,7 +90,7 @@ export async function PUT(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     const { type, id } = await request.json();
-    let result;
+    let result;    
 
     switch (type) {
       case 'qa':

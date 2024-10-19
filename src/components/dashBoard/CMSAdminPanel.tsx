@@ -42,6 +42,9 @@ import {
 } from '@/components/ui/dialog';
 import { SignedIn, UserButton } from '@clerk/nextjs';
 import Image from 'next/image';
+import Link from 'next/link';
+import WebsitePreviewCard from './WebsitePreviewCard';
+
 
 interface QA {
   id: string;
@@ -249,7 +252,7 @@ export default function CMSAdminPanel() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ type: 'qa', data: { question, answer } }),
       });
-      
+
       if (!response.ok) throw new Error('Failed to add Q&A');
       const newQA = await response.json();
       setQAs([...qas, newQA]);
@@ -681,7 +684,17 @@ export default function CMSAdminPanel() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <p>Select a tab to manage Q&A, Videos, or Products.</p>
+                <p className="mb-5">
+                  Select a tab to manage Q&A, Videos, Banners or Products.
+                </p>
+                <div className="border-2 w-fit p-2 border-gray-200 rounded-md ">
+                  <Link href={'/'} className=" ">
+                    <WebsitePreviewCard />
+                  </Link>
+                </div>
+                <Button className="mt-5">
+                  <Link href={'/'}>Go Home</Link>
+                </Button>
               </CardContent>
             </Card>
           </TabsContent>
@@ -999,7 +1012,7 @@ export default function CMSAdminPanel() {
               <CardContent>
                 {banners.map((banner, index) => (
                   <div key={banner.id} className="mb-4 p-4 border rounded">
-                    <h3 className="font-semibold">Banner {index +1}</h3>
+                    <h3 className="font-semibold">Banner {index + 1}</h3>
                     <div className="mt-2 grid grid-cols-2 gap-4">
                       <div>
                         <p className="font-bold">Large Screen:</p>
