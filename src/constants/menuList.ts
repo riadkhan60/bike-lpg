@@ -15,7 +15,7 @@ export const desktopMenuListLeft = [
   {
     id: 1,
     name: 'M/S Jannat Petroleum',
-    path: 'site/jannat-petroleum',
+    path: '/site/jannat-petroleum',
   },
   {
     id: 2,

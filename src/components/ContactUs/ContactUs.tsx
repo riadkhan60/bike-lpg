@@ -156,7 +156,7 @@ export default function ContactUS() {
               {/* Map */}
               <Card className="overflow-hidden">
                 <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3651.0141433011397!2d90.36667571492383!3d23.78014898457499!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755c0b58864c7e3%3A0x3e1e6f1e3d92c5d0!2sMS%20Jannat%20Traders!5e0!3m2!1sen!2sbd!4v1634720238849!5m2!1sen!2sbd"
+                  src="https://www.google.com/maps/embed?pb=!1m10!1m8!1m3!1d227.35795708366723!2d89.91902310374823!3d24.25131434176706!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sbd!4v1729610630047!5m2!1sen!2sbd"
                   width="100%"
                   height="300"
                   className="border-0"

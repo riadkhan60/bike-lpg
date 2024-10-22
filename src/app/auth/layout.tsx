@@ -9,10 +9,7 @@ export default async function layout({ children }: { children: React.ReactNode }
     redirect('/admin');
   }
   return (
-    <div className="h-screen flex-col flex justify-center items-center">
-      <div className="mb-5">
-        <Logo />
-      </div>
+    <div className="">
       {children}
     </div>
   );

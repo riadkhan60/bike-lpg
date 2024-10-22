@@ -79,7 +79,7 @@ export default function Owner() {
             </motion.div>
             <div className="flex flex-col justify-center space-y-6">
               <motion.h3 variants={itemVariants} className="text-3xl font-bold">
-                Mr. Jannat
+                Shafik Islam
               </motion.h3>
               <motion.p
                 variants={itemVariants}

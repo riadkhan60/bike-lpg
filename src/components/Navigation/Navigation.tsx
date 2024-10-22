@@ -305,6 +305,7 @@ import {
 import Container from '../LocalUi/container/Container';
 
 export default function Navigation() {
+  const [isOpen, setIsOpen] = React.useState(false);
   return (
     <Container>
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -322,10 +323,10 @@ export default function Navigation() {
           </div>
 
           <div className="flex items-center lg:hidden">
-            <Sheet>
+            <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetContent side="right" className="pr-0">
                 <div className="mt-12">
-                  <MobileNav />
+                  <MobileNav onNavigate={() => setIsOpen(false)} />
                 </div>
               </SheetContent>
               <SheetTrigger asChild>
@@ -378,27 +379,36 @@ function DesktopNav({ items }: { items: typeof MENU_ITEMS_LEFT }) {
   );
 }
 
-function MobileNav() {
+function MobileNav({ onNavigate }: { onNavigate: () => void }) {
   const pathname = usePathname();
 
   return (
     <div className="flex flex-col space-y-3">
-      {[...MENU_ITEMS_LEFT, ...MENU_ITEMS_RIGHT].map((item) => (
+      <Link
+        href="/"
+        onClick={onNavigate}
+        className={cn(
+            'text-[#000000] uppercase font-[600] text-[20px] transition-colors hover:text-[#FF9900]',
+            pathname === '/site' && 'text-[#FF9900]',
+        )}
+      >
+        Home
+      </Link>
+      {[...(MENU_ITEMS_LEFT.reverse()), ...MENU_ITEMS_RIGHT].map((item) => (
         <Link
           key={item.id}
           href={item.path}
+          onClick={onNavigate}
           className={cn(
-            'text-[#000000] uppercase font-[600] text-[20px] transition-colors hover:[#222222ab]',
-            pathname === item.path && 'text-foreground',
+            'text-[#000000] uppercase font-[600] text-[20px] transition-colors hover:text-[#FF9900]',
+            pathname === item.path && 'text-[#FF9900]',
           )}
         >
           {item.name}
         </Link>
       ))}
 
-      <ul>
-
-      </ul>
+      <ul></ul>
     </div>
   );
 }

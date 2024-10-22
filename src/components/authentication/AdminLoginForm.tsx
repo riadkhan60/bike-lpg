@@ -17,9 +17,8 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader } from 'lucide-react';
+import { Loader, Lock, Mail, ShieldCheck } from 'lucide-react';
 
-// Define the schema for form validation
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
   password: z.string().min(8, 'Password must be at least 8 characters long'),
@@ -53,7 +52,7 @@ export default function AdminLoginForm() {
 
       if (result.status === 'complete') {
         await setActive({ session: result.createdSessionId });
-        router.push('/admin'); // Redirect to dashboard on successful login
+        router.push('/admin');
       } else {
         console.error('Sign in result:', result);
         setError('An error occurred during sign in');
@@ -65,51 +64,92 @@ export default function AdminLoginForm() {
   };
 
   return (
-    <Card className="w-[350px]">
-      <CardHeader>
-        <CardTitle>Admin Login</CardTitle>
-        <CardDescription>
-          Enter your credentials to access the dashboard
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="grid w-full items-center gap-4">
-            <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                placeholder="admin@example.com"
-                {...register('email')}
-              />
-              {errors.email && (
-                <p className="text-sm text-red-500">{errors.email.message}</p>
-              )}
-            </div>
-            <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" {...register('password')} />
-              {errors.password && (
-                <p className="text-sm text-red-500">
-                  {errors.password.message}
-                </p>
-              )}
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-50 p-4">
+      <Card className="w-full max-w-md shadow-xl">
+        <CardHeader className="space-y-4 text-center">
+          <div className="flex justify-center mb-4">
+            <div className="bg-primary/10 p-3 rounded-full">
+              <ShieldCheck className="w-8 h-8 text-primary" />
             </div>
           </div>
-          {error && (
-            <Alert variant="destructive" className="mt-4">
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
-          <Button className="w-full mt-4" type="submit" disabled={isSubmitting}>
-            {isSubmitting ? (
-              <Loader className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              'Login'
+          <CardTitle className="text-2xl font-bold">Admin Portal</CardTitle>
+          <CardDescription className="text-base">
+            Securely access your dashboard
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-sm font-medium">
+                  Email Address
+                </Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="email"
+                    placeholder="admin@example.com"
+                    className="pl-9"
+                    {...register('email')}
+                  />
+                </div>
+                {errors.email && (
+                  <p className="text-sm text-destructive">
+                    {errors.email.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="password" className="text-sm font-medium">
+                  Password
+                </Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="password"
+                    type="password"
+                    className="pl-9"
+                    {...register('password')}
+                  />
+                </div>
+                {errors.password && (
+                  <p className="text-sm text-destructive">
+                    {errors.password.message}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {error && (
+              <Alert variant="destructive">
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
             )}
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
+
+            <Button
+              className="w-full h-11 text-base transition-all hover:scale-[1.02]"
+              type="submit"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader className="mr-2 h-4 w-4 animate-spin" />
+                  Signing in...
+                </>
+              ) : (
+                'Sign in to Dashboard'
+              )}
+            </Button>
+          </form>
+
+          <div className="text-center">
+            <Button variant="link" className="text-sm text-muted-foreground">
+              Forgot your password?
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
