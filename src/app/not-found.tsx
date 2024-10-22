@@ -17,7 +17,7 @@ const NotFound = () => {
             Oops! Page not found
           </h2>
           <p className="text-muted-foreground">
-            The page you're looking for doesn't exist or has been moved. Let's
+            The page you're looking for{" doesn't"} exist or has been moved. {"Let's"}
             get you back on track.
           </p>
         </div>

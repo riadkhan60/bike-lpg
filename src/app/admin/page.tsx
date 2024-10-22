@@ -37,7 +37,7 @@ const FallBack = () => {
             Access Restricted
           </h2>
           <p className="text-xl text-muted-foreground">
-            You can't access this page
+            {"You can't access this page"}
           </p>
         </div>
 
