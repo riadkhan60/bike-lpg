@@ -1,48 +1,48 @@
 export const mobileMenuList = [
   {
     id: 1,
-    name: 'Home',
-    path: '/'
+    name: 'M/S Jannat Petroleum',
+    path: '/',
   },
   {
     id: 2,
     name: 'Dashboard',
-    path: '/site/dashboard'
-  }
-]
+    path: '/site/dashboard',
+  },
+];
 
 export const desktopMenuListLeft = [
   {
     id: 1,
-    name: 'Home',
-    path: '/'
+    name: 'M/S Jannat Petroleum',
+    path: 'site/jannat-petroleum',
   },
   {
     id: 2,
-    name: 'Dashboard',
-    path: '/site/dashboard'
+    name: 'SR Design House',
+    path: '/site/sr-design-house',
   },
   {
     id: 3,
     name: 'BikeLPG',
-    path: '/site/bikelpg'
-  }
-]
+    path: '/site/bikelpg',
+  },
+];
 
 export const desktopMenuListRight = [
   {
     id: 1,
-    name: 'About',
-    path: '/site/about'
+    name: 'About Us',
+    path: '/site/about-us'
   },
   {
     id: 2,
-    name: 'Contact',
-    path: '/site/contact'
+    name: 'Why Us',
+    path: '/site/why-us'
   },
   {
     id: 3,
-    name: 'Why Us',
-    path: '/site/why-us'
-  }
+    name: 'Contact Us',
+    path: '/site/contact-us'
+  },
 ]

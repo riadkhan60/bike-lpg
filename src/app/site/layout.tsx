@@ -1,3 +1,4 @@
+import Footer from '@/components/footer/Footer';
 import Navigation from '@/components/Navigation/Navigation';
 import SmoothScroll from '@/components/smoothScroll/SmoothScroll';
 import React from 'react';
@@ -10,6 +11,9 @@ export default function layout({ children }: { children: React.ReactNode }) {
           <Navigation />
         </div>
         {children}
+        <div>
+          <Footer/>
+        </div>
       </div>
     </SmoothScroll>
   );

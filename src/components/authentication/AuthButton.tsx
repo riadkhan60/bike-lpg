@@ -10,7 +10,7 @@ export default async function AuthButton() {
     <div>
       {!user && (
         <SignedOut>
-          <SignInButton />
+          <SignInButton  />
         </SignedOut>
       )}
       {user && <Link href={'/admin'}>Go to DashBoard</Link>}
