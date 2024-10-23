@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, LogIn } from 'lucide-react';
+import { Toaster } from '@/components/ui/toaster';
 
 export default function page() {
   return (
@@ -12,6 +13,7 @@ export default function page() {
       <div>
         <CMSAdminPanel />
       </div>
+      <Toaster  />
     </Protect>
   );
 }

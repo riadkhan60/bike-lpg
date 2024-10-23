@@ -32,6 +32,7 @@ export default function StatsInput({
           field,
           value,
         }),
+        
       });
 
       if (!response.ok) {
