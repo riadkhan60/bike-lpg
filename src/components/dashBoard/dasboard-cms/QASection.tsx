@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Edit, Trash } from 'lucide-react';
+import { Edit, Loader2, Trash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -23,12 +23,9 @@ interface QA {
   answer: string;
 }
 
-
-
 export default function QASection() {
+  const { qas, setQAs } = useDashboardContext();
 
-  const {qas, setQAs, } = useDashboardContext();
-  
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editingItem, setEditingItem] = useState<QA | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -47,18 +44,18 @@ export default function QASection() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ type: 'qa', data: { question, answer } }),
       });
-      if (!response.ok) throw new Error('Failed to add Q&A');
-       const newQA = await response.json();
-       setQAs([...qas, newQA]);
+      if (!response.ok) throw new Error('Failed to add FAQ');
+      const newQA = await response.json();
+      setQAs([...qas, newQA]);
       form.reset();
       toast({
         title: 'Success',
-        description: 'Q&A added successfully',
+        description: 'FAQ added successfully',
       });
-    } catch  {
+    } catch {
       toast({
         title: 'Error',
-        description: 'Failed to add Q&A',
+        description: 'Failed to add FAQ',
         variant: 'destructive',
       });
     } finally {
@@ -74,19 +71,19 @@ export default function QASection() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ type: 'qa', id: qa.id, data: qa }),
       });
-      if (!response.ok) throw new Error('Failed to update Q&A');
+      if (!response.ok) throw new Error('Failed to update FAQ');
       const updatedQA = await response.json();
       setQAs(qas.map((item) => (item.id === qa.id ? updatedQA : item)));
       setEditingItem(null);
       setIsEditModalOpen(false);
       toast({
         title: 'Success',
-        description: 'Q&A updated successfully',
+        description: 'FAQ updated successfully',
       });
     } catch {
       toast({
         title: 'Error',
-        description: 'Failed to update Q&A',
+        description: 'Failed to update FAQ',
         variant: 'destructive',
       });
     } finally {
@@ -102,16 +99,16 @@ export default function QASection() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ type: 'qa', id }),
       });
-      if (!response.ok) throw new Error('Failed to delete Q&A');
+      if (!response.ok) throw new Error('Failed to delete FAQ');
       setQAs(qas.filter((qa) => qa.id !== id));
       toast({
         title: 'Success',
-        description: 'Q&A deleted successfully',
+        description: 'FAQ deleted successfully',
       });
     } catch {
       toast({
         title: 'Error',
-        description: 'Failed to delete Q&A',
+        description: 'Failed to delete FAQ',
         variant: 'destructive',
       });
     } finally {
@@ -142,43 +139,56 @@ export default function QASection() {
               </div>
             </div>
             <Button disabled={isSubmitting} type="submit" className="mt-4">
-              Add Q&A
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Uploading...
+                </>
+              ) : (
+                'Add FAQ'
+              )}
             </Button>
           </form>
         </CardContent>
       </Card>
       <Card>
         <CardHeader>
-          <CardTitle>Existing Q&As</CardTitle>
+          <CardTitle>Existing FAQs</CardTitle>
         </CardHeader>
         <CardContent>
-          {qas.map((qa) => (
-            <div key={qa.id} className="mb-4 p-4 border rounded">
-              <h3 className="font-semibold">{qa.question}</h3>
-              <p className="mt-2">{qa.answer}</p>
-              <div className="mt-2 flex space-x-2">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => {
-                    setEditingItem(qa);
-                    setIsEditModalOpen(true);
-                  }}
-                >
-                  <Edit className="h-4 w-4 mr-2" />
-                  Edit
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => handleDeleteQA(qa.id)}
-                >
-                  <Trash className="h-4 w-4 mr-2" />
-                  Delete
-                </Button>
-              </div>
+          {qas.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">
+              No FAQ uploaded yet.
             </div>
-          ))}
+          ) : (
+            qas.map((qa) => (
+              <div key={qa.id} className="mb-4 p-4 border rounded">
+                <h3 className="font-semibold">{qa.question}</h3>
+                <p className="mt-2">{qa.answer}</p>
+                <div className="mt-2 flex space-x-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      setEditingItem(qa);
+                      setIsEditModalOpen(true);
+                    }}
+                  >
+                    <Edit className="h-4 w-4 mr-2" />
+                    Edit
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleDeleteQA(qa.id)}
+                  >
+                    <Trash className="h-4 w-4 mr-2" />
+                    Delete
+                  </Button>
+                </div>
+              </div>
+            ))
+          )}
         </CardContent>
       </Card>
       <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
@@ -225,7 +235,16 @@ export default function QASection() {
               </div>
               <DialogFooter className="mt-4">
                 <Button disabled={isSubmitting} type="submit">
-                  Save changes
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Updating...
+                    </>
+                  ) : (
+                    
+                    'Save changes'
+                  )
+                  }
                 </Button>
               </DialogFooter>
             </form>

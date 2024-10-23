@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { Edit, Trash, MoveUp, MoveDown } from 'lucide-react';
+import { Edit, Trash, MoveUp, MoveDown, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -23,8 +23,6 @@ interface VideoLink {
   url: string;
   order: number;
 }
-
-
 
 export default function VideosSection() {
   const { videoLinks, setVideoLinks } = useDashboardContext();
@@ -79,12 +77,12 @@ export default function VideosSection() {
         }),
       });
       if (!response.ok) throw new Error('Failed to update video link');
-     const updatedVideoLink = await response.json();
-     setVideoLinks(
-       videoLinks.map((link) =>
-         link.id === videoLink.id ? updatedVideoLink : link,
-       ),
-     );
+      const updatedVideoLink = await response.json();
+      setVideoLinks(
+        videoLinks.map((link) =>
+          link.id === videoLink.id ? updatedVideoLink : link,
+        ),
+      );
       setEditingItem(null);
       setIsEditModalOpen(false);
       toast({
@@ -111,7 +109,7 @@ export default function VideosSection() {
         body: JSON.stringify({ type: 'videoLink', id }),
       });
       if (!response.ok) throw new Error('Failed to delete video link');
-     setVideoLinks(videoLinks.filter((link) => link.id !== id));
+      setVideoLinks(videoLinks.filter((link) => link.id !== id));
       toast({
         title: 'Success',
         description: 'Video link deleted successfully',
@@ -152,7 +150,7 @@ export default function VideosSection() {
             }),
           ),
         );
-       setVideoLinks(newLinks);
+        setVideoLinks(newLinks);
       } catch {
         toast({
           title: 'Error',
@@ -195,149 +193,186 @@ export default function VideosSection() {
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Manage Video Links</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleAddVideoLink} className="mb-6">
-          <div className="grid w-full items-center gap-4">
-            <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="videoTitle">Video Title</Label>
-              <Input id="videoTitle" placeholder="Enter video title" required />
-            </div>
-            <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="videoUrl">Video URL</Label>
-              <Input id="videoUrl" placeholder="Enter video URL" required />
-            </div>
-          </div>
-          <Button disabled={isSubmitting} type="submit" className="mt-4">
-            Add Video Link
-          </Button>
-        </form>
-        <DragDropContext onDragEnd={onDragEnd}>
-          <Droppable droppableId="videoLinks">
-            {(provided) => (
-              <ul {...provided.droppableProps} ref={provided.innerRef}>
-                {videoLinks.map((link, index) => (
-                  <Draggable key={link.id} draggableId={link.id} index={index}>
-                    {(provided) => (
-                      <li
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        className="mb-4"
-                      >
-                        <Card>
-                          <CardContent className="flex justify-between items-center p-4">
-                            <div>
-                              <h3 className="font-semibold">{link.title}</h3>
-                              <p className="text-sm text-gray-500">
-                                {link.url}
-                              </p>
-                            </div>
-                            <div className="flex space-x-2">
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() =>
-                                  handleMoveVideoLink(link.id, 'up')
-                                }
-                              >
-                                <MoveUp className="h-4 w-4" />
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() =>
-                                  handleMoveVideoLink(link.id, 'down')
-                                }
-                              >
-                                <MoveDown className="h-4 w-4" />
-                              </Button>
-                              <Button
-                                disabled={isSubmitting}
-                                size="sm"
-                                variant="outline"
-                                onClick={() => {
-                                  setEditingItem(link);
-                                  setIsEditModalOpen(true);
-                                }}
-                              >
-                                <Edit className="h-4 w-4" />
-                              </Button>
-                              <Button
-                                disabled={isSubmitting}
-                                size="sm"
-                                variant="outline"
-                                onClick={() => handleDeleteVideoLink(link.id)}
-                              >
-                                <Trash className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      </li>
-                    )}
-                  </Draggable>
-                ))}
-                {provided.placeholder}
-              </ul>
-            )}
-          </Droppable>
-        </DragDropContext>
-      </CardContent>
-      <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Edit Video Link</DialogTitle>
-          </DialogHeader>
-          {editingItem && (
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleEditVideoLink(editingItem);
-              }}
-            >
-              <div className="grid w-full items-center gap-4">
-                <div className="flex flex-col space-y-1.5">
-                  <Label htmlFor="editVideoTitle">Video Title</Label>
-                  <Input
-                    id="editVideoTitle"
-                    value={editingItem.title}
-                    onChange={(e) =>
-                      setEditingItem({
-                        ...editingItem,
-                        title: e.target.value,
-                      })
-                    }
-                    required
-                  />
-                </div>
-                <div className="flex flex-col space-y-1.5">
-                  <Label htmlFor="editVideoUrl">Video URL</Label>
-                  <Input
-                    id="editVideoUrl"
-                    value={editingItem.url}
-                    onChange={(e) =>
-                      setEditingItem({
-                        ...editingItem,
-                        url: e.target.value,
-                      })
-                    }
-                    required
-                  />
-                </div>
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>Manage Video Links</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleAddVideoLink} className="mb-6">
+            <div className="grid w-full items-center gap-4">
+              <div className="flex flex-col space-y-1.5">
+                <Label htmlFor="videoTitle">Video Title</Label>
+                <Input
+                  id="videoTitle"
+                  placeholder="Enter video title"
+                  required
+                />
               </div>
-              <DialogFooter className="mt-4">
-                <Button disabled={isSubmitting} type="submit">
-                  Save changes
-                </Button>
-              </DialogFooter>
-            </form>
+              <div className="flex flex-col space-y-1.5">
+                <Label htmlFor="videoUrl">Video URL</Label>
+                <Input id="videoUrl" placeholder="Enter video URL" required />
+              </div>
+            </div>
+            <Button disabled={isSubmitting} type="submit" className="mt-4">
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Uploading...
+                </>
+              ) : (
+                'Add Video Link'
+              )}
+            </Button>
+          </form>
+        </CardContent>
+
+        <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Edit Video Link</DialogTitle>
+            </DialogHeader>
+            {editingItem && (
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleEditVideoLink(editingItem);
+                }}
+              >
+                <div className="grid w-full items-center gap-4">
+                  <div className="flex flex-col space-y-1.5">
+                    <Label htmlFor="editVideoTitle">Video Title</Label>
+                    <Input
+                      id="editVideoTitle"
+                      value={editingItem.title}
+                      onChange={(e) =>
+                        setEditingItem({
+                          ...editingItem,
+                          title: e.target.value,
+                        })
+                      }
+                      required
+                    />
+                  </div>
+                  <div className="flex flex-col space-y-1.5">
+                    <Label htmlFor="editVideoUrl">Video URL</Label>
+                    <Input
+                      id="editVideoUrl"
+                      value={editingItem.url}
+                      onChange={(e) =>
+                        setEditingItem({
+                          ...editingItem,
+                          url: e.target.value,
+                        })
+                      }
+                      required
+                    />
+                  </div>
+                </div>
+                <DialogFooter className="mt-4">
+                  <Button disabled={isSubmitting} type="submit">
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Updating...
+                      </>
+                    ) : (
+                      'Save changes'
+                    )}
+                  </Button>
+                </DialogFooter>
+              </form>
+            )}
+          </DialogContent>
+        </Dialog>
+      </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle>Existing Video Links</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {videoLinks.length === 0 && (
+            <p className="text-center py-8 text-muted-foreground">
+              No video links found. Add one above.
+            </p>
           )}
-        </DialogContent>
-      </Dialog>
-    </Card>
+          <DragDropContext onDragEnd={onDragEnd}>
+            <Droppable droppableId="videoLinks">
+              {(provided) => (
+                <ul {...provided.droppableProps} ref={provided.innerRef}>
+                  {videoLinks.map((link, index) => (
+                    <Draggable
+                      key={link.id}
+                      draggableId={link.id}
+                      index={index}
+                    >
+                      {(provided) => (
+                        <li
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          className="mb-4"
+                        >
+                          <Card>
+                            <CardContent className="flex justify-between items-center p-4">
+                              <div>
+                                <h3 className="font-semibold">{link.title}</h3>
+                                <p className="text-sm text-gray-500">
+                                  {link.url}
+                                </p>
+                              </div>
+                              <div className="flex space-x-2">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() =>
+                                    handleMoveVideoLink(link.id, 'up')
+                                  }
+                                >
+                                  <MoveUp className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() =>
+                                    handleMoveVideoLink(link.id, 'down')
+                                  }
+                                >
+                                  <MoveDown className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  disabled={isSubmitting}
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => {
+                                    setEditingItem(link);
+                                    setIsEditModalOpen(true);
+                                  }}
+                                >
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  disabled={isSubmitting}
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => handleDeleteVideoLink(link.id)}
+                                >
+                                  <Trash className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        </li>
+                      )}
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
+                </ul>
+              )}
+            </Droppable>
+          </DragDropContext>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
