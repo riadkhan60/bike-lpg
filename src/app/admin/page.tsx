@@ -1,5 +1,5 @@
 'use client';
-import CMSAdminPanel from '@/components/dashBoard/CMSAdminPanel';
+import CMSAdminPanel from '@/components/dashBoard/dasboard-cms/CMSAdminPanel';
 import { Protect } from '@clerk/nextjs';
 import Image from 'next/image';
 import Link from 'next/link';

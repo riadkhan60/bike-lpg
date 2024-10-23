@@ -1,0 +1,357 @@
+'use client';
+
+import { useState, useRef } from 'react';
+import Image from 'next/image';
+import { Edit, Trash } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { toast } from '@/hooks/use-toast';
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+
+interface Product {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  imageUrl: string;
+}
+
+interface ProductsSectionProps {
+  products: Product[];
+  fetchData: () => Promise<void>;
+}
+
+export default function ProductsSection({
+  products,
+  fetchData,
+}: ProductsSectionProps) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [editingItem, setEditingItem] = useState<Product | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImageUpload = async (file: File): Promise<string> => {
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to upload image');
+      }
+
+      const data = await response.json();
+      return data.url;
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      throw error;
+    }
+  };
+
+  const handleAddProduct = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const name = (form.elements.namedItem('productName') as HTMLInputElement)
+      .value;
+    const description = (
+      form.elements.namedItem('productDescription') as HTMLTextAreaElement
+    ).value;
+    const price = parseFloat(
+      (form.elements.namedItem('productPrice') as HTMLInputElement).value,
+    );
+    const imageFile = (
+      form.elements.namedItem('productImage') as HTMLInputElement
+    ).files?.[0];
+
+    try {
+      setIsSubmitting(true);
+      let imageUrl = '';
+      if (imageFile) {
+        imageUrl = await handleImageUpload(imageFile);
+      }
+
+      const response = await fetch('/api/cms', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'product',
+          data: { name, description, price, imageUrl },
+        }),
+      });
+      if (!response.ok) throw new Error('Failed to add product');
+      await fetchData();
+      form.reset();
+      toast({
+        title: 'Success',
+        description: 'Product added successfully',
+      });
+    } catch  {
+      toast({
+        title: 'Error',
+        description: 'Failed to add product',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleEditProduct = async (product: Product) => {
+    try {
+      setIsSubmitting(true);
+      let imageUrl = product.imageUrl;
+      if (fileInputRef.current?.files?.[0]) {
+        imageUrl = await handleImageUpload(fileInputRef.current.files[0]);
+      }
+
+      const response = await fetch('/api/cms', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'product',
+          id: product.id,
+          data: { ...product, imageUrl },
+        }),
+      });
+      if (!response.ok) throw new Error('Failed to update product');
+      await fetchData();
+      setEditingItem(null);
+      setIsEditModalOpen(false);
+      toast({
+        title: 'Success',
+        description: 'Product updated successfully',
+      });
+    } catch {
+      toast({
+        title: 'Error',
+        description: 'Failed to update product',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDeleteProduct = async (id: string) => {
+    try {
+      setIsSubmitting(true);
+      const response = await fetch('/api/cms', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'product', id }),
+      });
+      if (!response.ok) throw new Error('Failed to delete product');
+      await fetchData();
+      toast({
+        title: 'Success',
+        description: 'Product deleted successfully',
+      });
+    } catch {
+      toast({
+        title: 'Error',
+        description: 'Failed to delete product',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>Add New Product</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleAddProduct}>
+            <div className="grid w-full items-center gap-4">
+              <div className="flex flex-col space-y-1.5">
+                <Label htmlFor="productName">Product Name</Label>
+                <Input
+                  id="productName"
+                  placeholder="Enter product name"
+                  required
+                />
+              </div>
+              <div className="flex flex-col space-y-1.5">
+                <Label htmlFor="productDescription">Product Description</Label>
+                <Textarea
+                  id="productDescription"
+                  placeholder="Enter product description"
+                  required
+                />
+              </div>
+              <div className="flex flex-col space-y-1.5">
+                <Label htmlFor="productPrice">Product Price</Label>
+                <Input
+                  id="productPrice"
+                  type="number"
+                  step="0.01"
+                  placeholder="Enter product price"
+                  required
+                />
+              </div>
+              <div className="flex flex-col space-y-1.5">
+                <Label htmlFor="productImage">Product Image</Label>
+                <Input
+                  id="productImage"
+                  type="file"
+                  accept="image/*"
+                  required
+                />
+              </div>
+            </div>
+            <Button disabled={isSubmitting} type="submit" className="mt-4">
+              Add Product
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle>Existing Products</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {products.map((product) => (
+            <div key={product.id} className="mb-4 p-4 border rounded">
+              <h3 className="font-semibold">{product.name}</h3>
+              <p>{product.description}</p>
+              <p className="font-bold mt-2">${product.price.toFixed(2)}</p>
+              {product.imageUrl && (
+                <Image
+                  src={product.imageUrl}
+                  alt={product.name}
+                  width={400}
+                  height={400}
+                  className="mt-2 max-w-xs"
+                />
+              )}
+              <div className="mt-2 flex space-x-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    setEditingItem(product);
+                    setIsEditModalOpen(true);
+                  }}
+                >
+                  <Edit className="h-4 w-4 mr-2" />
+                  Edit
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => handleDeleteProduct(product.id)}
+                >
+                  <Trash className="h-4 w-4 mr-2" />
+                  Delete
+                </Button>
+              </div>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+      <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Product</DialogTitle>
+          </DialogHeader>
+          {editingItem && (
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleEditProduct(editingItem);
+              }}
+            >
+              <div className="grid w-full items-center gap-4">
+                <div className="flex flex-col space-y-1.5">
+                  <Label htmlFor="editProductName">Product Name</Label>
+                  <Input
+                    id="editProductName"
+                    value={editingItem.name}
+                    onChange={(e) =>
+                      setEditingItem({
+                        ...editingItem,
+                        name: e.target.value,
+                      })
+                    }
+                    required
+                  />
+                </div>
+                <div className="flex flex-col space-y-1.5">
+                  <Label htmlFor="editProductDescription">
+                    Product Description
+                  </Label>
+                  <Textarea
+                    id="editProductDescription"
+                    value={editingItem.description}
+                    onChange={(e) =>
+                      setEditingItem({
+                        ...editingItem,
+                        description: e.target.value,
+                      })
+                    }
+                    required
+                  />
+                </div>
+                <div className="flex flex-col space-y-1.5">
+                  <Label htmlFor="editProductPrice">Product Price</Label>
+                  <Input
+                    id="editProductPrice"
+                    type="number"
+                    step="0.01"
+                    value={editingItem.price}
+                    onChange={(e) =>
+                      setEditingItem({
+                        ...editingItem,
+                        price: parseFloat(e.target.value),
+                      })
+                    }
+                    required
+                  />
+                </div>
+                <div className="flex flex-col space-y-1.5">
+                  <Label htmlFor="editProductImage">Product Image</Label>
+                  <Input
+                    id="editProductImage"
+                    type="file"
+                    accept="image/*"
+                    ref={fileInputRef}
+                  />
+                </div>
+                {editingItem.imageUrl && (
+                  <Image
+                    src={editingItem.imageUrl}
+                    alt={editingItem.name}
+                    width={400}
+                    height={400}
+                    className="mt-2 max-w-xs"
+                  />
+                )}
+              </div>
+              <DialogFooter className="mt-4">
+                <Button disabled={isSubmitting} type="submit">
+                  Save changes
+                </Button>
+              </DialogFooter>
+            </form>
+          )}
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}

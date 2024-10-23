@@ -25,7 +25,7 @@ export const desktopMenuListLeft = [
   {
     id: 3,
     name: 'BikeLPG',
-    path: '/site/bikelpg',
+    path: '/site/bike-lpg',
   },
 ];
 
