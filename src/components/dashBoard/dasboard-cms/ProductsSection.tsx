@@ -16,24 +16,19 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { useDashboardContext } from './DashboardContext/DasboardContext';
 
 interface Product {
   id: string;
   name: string;
   description: string;
   price: number;
+  offerPrice: number | null;
   imageUrl: string;
 }
 
-interface ProductsSectionProps {
-  products: Product[];
-  fetchData: () => Promise<void>;
-}
-
-export default function ProductsSection({
-  products,
-  fetchData,
-}: ProductsSectionProps) {
+export default function Component() {
+  const { products, setProducts } = useDashboardContext();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editingItem, setEditingItem] = useState<Product | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -72,6 +67,11 @@ export default function ProductsSection({
     const price = parseFloat(
       (form.elements.namedItem('productPrice') as HTMLInputElement).value,
     );
+    const offerPrice =
+      parseFloat(
+        (form.elements.namedItem('productOfferPrice') as HTMLInputElement)
+          .value,
+      ) || 0;
     const imageFile = (
       form.elements.namedItem('productImage') as HTMLInputElement
     ).files?.[0];
@@ -88,17 +88,18 @@ export default function ProductsSection({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           type: 'product',
-          data: { name, description, price, imageUrl },
+          data: { name, description, price, offerPrice, imageUrl },
         }),
       });
       if (!response.ok) throw new Error('Failed to add product');
-      await fetchData();
+      const newProduct = await response.json();
+      setProducts([...products, newProduct]);
       form.reset();
       toast({
         title: 'Success',
         description: 'Product added successfully',
       });
-    } catch  {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to add product',
@@ -117,17 +118,24 @@ export default function ProductsSection({
         imageUrl = await handleImageUpload(fileInputRef.current.files[0]);
       }
 
+      const offerPrice = product.offerPrice || 0;
+
       const response = await fetch('/api/cms', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           type: 'product',
           id: product.id,
-          data: { ...product, imageUrl },
+          data: { ...product, offerPrice, imageUrl },
         }),
       });
       if (!response.ok) throw new Error('Failed to update product');
-      await fetchData();
+      const updatedProduct = await response.json();
+      setProducts(
+        products.map((item) =>
+          item.id === product.id ? updatedProduct : item,
+        ),
+      );
       setEditingItem(null);
       setIsEditModalOpen(false);
       toast({
@@ -154,7 +162,7 @@ export default function ProductsSection({
         body: JSON.stringify({ type: 'product', id }),
       });
       if (!response.ok) throw new Error('Failed to delete product');
-      await fetchData();
+      setProducts(products.filter((product) => product.id !== id));
       toast({
         title: 'Success',
         description: 'Product deleted successfully',
@@ -206,6 +214,17 @@ export default function ProductsSection({
                 />
               </div>
               <div className="flex flex-col space-y-1.5">
+                <Label htmlFor="productOfferPrice">
+                  Offer Price (optional)
+                </Label>
+                <Input
+                  id="productOfferPrice"
+                  type="number"
+                  step="0.01"
+                  placeholder="Enter offer price (if applicable)"
+                />
+              </div>
+              <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="productImage">Product Image</Label>
                 <Input
                   id="productImage"
@@ -230,7 +249,14 @@ export default function ProductsSection({
             <div key={product.id} className="mb-4 p-4 border rounded">
               <h3 className="font-semibold">{product.name}</h3>
               <p>{product.description}</p>
-              <p className="font-bold mt-2">${product.price.toFixed(2)}</p>
+              <p className="font-bold mt-2">
+                ${product.price.toFixed(2)}
+                {product.offerPrice && (
+                  <span className="ml-2 text-green-600">
+                    Offer: ${product.offerPrice.toFixed(2)}
+                  </span>
+                )}
+              </p>
               {product.imageUrl && (
                 <Image
                   src={product.imageUrl}
@@ -322,6 +348,25 @@ export default function ProductsSection({
                       })
                     }
                     required
+                  />
+                </div>
+                <div className="flex flex-col space-y-1.5">
+                  <Label htmlFor="editProductOfferPrice">
+                    Offer Price (optional)
+                  </Label>
+                  <Input
+                    id="editProductOfferPrice"
+                    type="number"
+                    step="0.01"
+                    value={editingItem.offerPrice || ''}
+                    onChange={(e) =>
+                      setEditingItem({
+                        ...editingItem,
+                        offerPrice: e.target.value
+                          ? parseFloat(e.target.value)
+                          : null,
+                      })
+                    }
                   />
                 </div>
                 <div className="flex flex-col space-y-1.5">

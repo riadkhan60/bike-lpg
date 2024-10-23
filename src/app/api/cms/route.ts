@@ -9,9 +9,10 @@ export async function GET() {
     });
     const products = await prisma.product.findMany();
     const banners = await prisma.banner.findMany();
+    const reviews = await prisma.review.findMany(); // Add reviews fetch
 
-    return NextResponse.json({ qas, videoLinks, products, banners });
-  } catch  {
+    return NextResponse.json({ qas, videoLinks, products, banners, reviews });
+  } catch {
     return NextResponse.json(
       { error: 'Failed to fetch data' },
       { status: 500 },
@@ -43,12 +44,21 @@ export async function POST(request: NextRequest) {
       case 'banner':
         result = await prisma.banner.create({ data });
         break;
+      case 'review': // Add review case
+        result = await prisma.review.create({
+          data: {
+            name: data.name,
+            occupation: data.occupation,
+            review: data.review,
+          },
+        });
+        break;
       default:
         throw new Error('Invalid type');
     }
 
     return NextResponse.json(result, { status: 201 });
-  } catch  {
+  } catch {
     return NextResponse.json(
       { error: 'Failed to create record' },
       { status: 500 },
@@ -74,12 +84,22 @@ export async function PUT(request: NextRequest) {
       case 'banner':
         result = await prisma.banner.update({ where: { id }, data });
         break;
+      case 'review': // Add review case
+        result = await prisma.review.update({
+          where: { id },
+          data: {
+            name: data.name,
+            occupation: data.occupation,
+            review: data.review,
+          },
+        });
+        break;
       default:
         throw new Error('Invalid type');
     }
 
     return NextResponse.json(result);
-  } catch  {
+  } catch {
     return NextResponse.json(
       { error: 'Failed to update record' },
       { status: 500 },
@@ -90,7 +110,7 @@ export async function PUT(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     const { type, id } = await request.json();
-    let result;    
+    let result;
 
     switch (type) {
       case 'qa':
@@ -105,12 +125,15 @@ export async function DELETE(request: NextRequest) {
       case 'banner':
         result = await prisma.banner.delete({ where: { id } });
         break;
+      case 'review': // Add review case
+        result = await prisma.review.delete({ where: { id } });
+        break;
       default:
         throw new Error('Invalid type');
     }
 
     return NextResponse.json(result);
-  } catch  {
+  } catch {
     return NextResponse.json(
       { error: 'Failed to delete record' },
       { status: 500 },

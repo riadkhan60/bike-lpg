@@ -36,3 +36,18 @@ CREATE TABLE "Banner" (
 
     CONSTRAINT "Banner_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateTable
+CREATE TABLE "stats" (
+    "id" TEXT NOT NULL,
+    "employees" INTEGER NOT NULL,
+    "dealers" INTEGER NOT NULL,
+    "clientsServed" INTEGER NOT NULL,
+    "solutions" INTEGER NOT NULL,
+    "satiesfiedClients" INTEGER NOT NULL,
+    "lpgConversion" INTEGER NOT NULL,
+    "fuelstation" INTEGER NOT NULL,
+    "furnitureSold" INTEGER NOT NULL,
+
+    CONSTRAINT "stats_pkey" PRIMARY KEY ("id")
+);

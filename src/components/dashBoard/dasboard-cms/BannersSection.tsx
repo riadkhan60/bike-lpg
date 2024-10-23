@@ -15,22 +15,18 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { useDashboardContext } from './DashboardContext/DasboardContext';
 
 interface Banner {
   id: string;
   largeScreenUrl: string;
-  smallScreenUrl: string;
+  smallScreenUrl?: string;
 }
 
-interface BannersSectionProps {
-  banners: Banner[];
-  fetchData: () => Promise<void>;
-}
 
-export default function BannersSection({
-  banners,
-  fetchData,
-}: BannersSectionProps) {
+
+export default function BannersSection() {
+  const { banners, setBanners } = useDashboardContext();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editingItem, setEditingItem] = useState<Banner | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -91,7 +87,8 @@ export default function BannersSection({
       });
 
       if (!response.ok) throw new Error('Failed to add banner');
-      await fetchData();
+      const newBanner = await response.json();
+      setBanners([...banners, newBanner]);
       form.reset();
       toast({
         title: 'Success',
@@ -135,7 +132,10 @@ export default function BannersSection({
         }),
       });
       if (!response.ok) throw new Error('Failed to update banner');
-      await fetchData();
+     const updatedBanner = await response.json();
+     setBanners(
+       banners.map((item) => (item.id === banner.id ? updatedBanner : item)),
+     );
       setEditingItem(null);
       setIsEditModalOpen(false);
       toast({
@@ -162,7 +162,7 @@ export default function BannersSection({
         body: JSON.stringify({ type: 'banner', id }),
       });
       if (!response.ok) throw new Error('Failed to delete banner');
-      await fetchData();
+      setBanners(banners.filter((banner) => banner.id !== id));
       toast({
         title: 'Success',
         description: 'Banner deleted successfully',
@@ -202,7 +202,6 @@ export default function BannersSection({
                   id="smallScreenBanner"
                   type="file"
                   accept="image/*"
-                  required
                 />
               </div>
             </div>
@@ -228,18 +227,18 @@ export default function BannersSection({
                     alt="Large Screen Banner"
                     width={400}
                     height={200}
-                    className="mt-2 max-w-full h-auto"
+                    className="mt-2 max-w-full h-auto rounded-lg"
                   />
                 </div>
                 <div>
                   <p className="font-bold">Small Screen:</p>
-                  <Image
+                 {banner.smallScreenUrl ? <Image
                     src={banner.smallScreenUrl}
                     alt="Small Screen Banner"
                     width={200}
                     height={200}
-                    className="mt-2 max-w-full h-auto"
-                  />
+                    className="mt-2 max-w-full h-auto rounded-lg"
+                  /> : <p>No small screen banner</p>}
                 </div>
               </div>
               <div className="mt-2 flex space-x-2">
@@ -296,7 +295,7 @@ export default function BannersSection({
                       alt="Large Screen Banner"
                       width={400}
                       height={200}
-                      className="mt-2 max-w-full h-auto"
+                      className="mt-2 max-w-full h-auto rounded-lg"
                     />
                   )}
                 </div>
@@ -316,7 +315,7 @@ export default function BannersSection({
                       alt="Small Screen Banner"
                       width={200}
                       height={200}
-                      className="mt-2 max-w-full h-auto"
+                      className="mt-2 max-w-full h-auto rounded-lg"
                     />
                   )}
                 </div>

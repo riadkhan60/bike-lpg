@@ -8,43 +8,39 @@ import VideosSection from './VideosSection';
 import ProductsSection from './ProductsSection';
 import BannersSection from './BannersSection';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import DasboardContextProvider from './DashboardContext/DasboardContext';
-
+import DasboardContextProvider, {
+  useDashboardContext,
+} from './DashboardContext/DasboardContext';
+import DynamicStatsSection from './Stats/Stats';
+import CustomerReviewsSection from './Reviews/CustomerReviews';
 
 export default function CMSAdminPanel() {
-  <DasboardContextProvider>
-    <Panel />
-  </DasboardContextProvider>
+  return (
+    <DasboardContextProvider>
+      <Panel />
+    </DasboardContextProvider>
+  );
 }
 
-
-
-
- function Panel() {
+function Panel() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [isLoading, setIsLoading] = useState(true);
-  const [data, setData] = useState({
-    qas: [],
-    videoLinks: [],
-    products: [],
-    banners: [],
-  });
+  const { fetchedInitialData } = useDashboardContext();
 
   useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        const response = await fetch('/api/cms');
+        const fetchedData = await response.json();
+        fetchedInitialData(fetchedData);
+      } catch (error) {
+        console.error('Failed to fetch data:', error);
+      }
+      setIsLoading(false);
+    };
     fetchData();
-  }, []);
-
-  const fetchData = async () => {
-    setIsLoading(true);
-    try {
-      const response = await fetch('/api/cms');
-      const fetchedData = await response.json();
-      setData(fetchedData);
-    } catch (error) {
-      console.error('Failed to fetch data:', error);
-    }
-    setIsLoading(false);
-  };
+  }, [fetchedInitialData]);
 
   if (isLoading) {
     return (
@@ -60,26 +56,34 @@ export default function CMSAdminPanel() {
       <main className="flex-1 p-8 overflow-auto">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList>
-            {['dashboard', 'FAQ', 'videos', 'products', 'banners'].map((tab) => (
-              <TabsTrigger key={tab} value={tab}>
-                {tab.charAt(0).toUpperCase() + tab.slice(1)}
-              </TabsTrigger>
-            ))}
+            {['dashboard', 'FAQ', 'videos', 'products', 'banners', 'Reviews', 'Stats'].map(
+              (tab) => (
+                <TabsTrigger key={tab} value={tab}>
+                  {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                </TabsTrigger>
+              ),
+            )}
           </TabsList>
           <TabsContent value="dashboard">
             <Dashboard />
           </TabsContent>
           <TabsContent value="FAQ">
-            <QASection qas={data.qas} fetchData={fetchData} />
+            <QASection />
           </TabsContent>
           <TabsContent value="videos">
-            <VideosSection videoLinks={data.videoLinks} fetchData={fetchData} />
+            <VideosSection />
           </TabsContent>
           <TabsContent value="products">
-            <ProductsSection products={data.products} fetchData={fetchData} />
+            <ProductsSection />
           </TabsContent>
           <TabsContent value="banners">
-            <BannersSection banners={data.banners} fetchData={fetchData} />
+            <BannersSection />
+          </TabsContent>
+          <TabsContent value="Reviews">
+            <CustomerReviewsSection />
+          </TabsContent>
+          <TabsContent value="Stats">
+            <DynamicStatsSection />
           </TabsContent>
         </Tabs>
       </main>

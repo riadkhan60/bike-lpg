@@ -19,6 +19,13 @@ model QA {
   answer   String
 }
 
+model Review {
+  id         String   @id @default(cuid())
+  name       String
+  occupation String
+  review     String
+}
+
 model VideoLink {
   id    String @id @default(cuid())
   title String
@@ -31,6 +38,7 @@ model Product {
   name        String
   description String
   price       Float
+  offerPrice  Float
   imageUrl    String
 }
 
@@ -38,4 +46,16 @@ model Banner {
   id              String @id @default(cuid())
   largeScreenUrl  String
   smallScreenUrl  String
+}
+
+model stats {
+  id    String @id @default(cuid())
+  employees Int
+  dealers Int
+  clientsServed Int
+  solutions Int
+  satiesfiedClients Int
+  lpgConversion Int
+  fuelstation Int
+  furnitureSold Int
 }

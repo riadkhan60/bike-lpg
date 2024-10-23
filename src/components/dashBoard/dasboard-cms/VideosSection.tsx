@@ -15,6 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { useDashboardContext } from './DashboardContext/DasboardContext';
 
 interface VideoLink {
   id: string;
@@ -23,15 +24,10 @@ interface VideoLink {
   order: number;
 }
 
-interface VideosSectionProps {
-  videoLinks: VideoLink[];
-  fetchData: () => Promise<void>;
-}
 
-export default function VideosSection({
-  videoLinks,
-  fetchData,
-}: VideosSectionProps) {
+
+export default function VideosSection() {
+  const { videoLinks, setVideoLinks } = useDashboardContext();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editingItem, setEditingItem] = useState<VideoLink | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -52,7 +48,8 @@ export default function VideosSection({
         body: JSON.stringify({ type: 'videoLink', data: { title, url } }),
       });
       if (!response.ok) throw new Error('Failed to add video link');
-      await fetchData();
+      const newVideoLink = await response.json();
+      setVideoLinks([...videoLinks, newVideoLink]);
       form.reset();
       toast({
         title: 'Success',
@@ -82,7 +79,12 @@ export default function VideosSection({
         }),
       });
       if (!response.ok) throw new Error('Failed to update video link');
-      await fetchData();
+     const updatedVideoLink = await response.json();
+     setVideoLinks(
+       videoLinks.map((link) =>
+         link.id === videoLink.id ? updatedVideoLink : link,
+       ),
+     );
       setEditingItem(null);
       setIsEditModalOpen(false);
       toast({
@@ -109,7 +111,7 @@ export default function VideosSection({
         body: JSON.stringify({ type: 'videoLink', id }),
       });
       if (!response.ok) throw new Error('Failed to delete video link');
-      await fetchData();
+     setVideoLinks(videoLinks.filter((link) => link.id !== id));
       toast({
         title: 'Success',
         description: 'Video link deleted successfully',
@@ -150,7 +152,7 @@ export default function VideosSection({
             }),
           ),
         );
-        await fetchData();
+       setVideoLinks(newLinks);
       } catch {
         toast({
           title: 'Error',
@@ -182,7 +184,7 @@ export default function VideosSection({
           }),
         ),
       );
-      await fetchData();
+      setVideoLinks(items);
     } catch {
       toast({
         title: 'Error',

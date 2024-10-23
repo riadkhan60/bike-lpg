@@ -15,6 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { useDashboardContext } from './DashboardContext/DasboardContext';
 
 interface QA {
   id: string;
@@ -22,12 +23,11 @@ interface QA {
   answer: string;
 }
 
-interface QASectionProps {
-  qas: QA[];
-  fetchData: () => Promise<void>;
-}
 
-export default function QASection({ qas, fetchData }: QASectionProps) {
+
+export default function QASection() {
+
+  const {qas, setQAs, } = useDashboardContext();
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editingItem, setEditingItem] = useState<QA | null>(null);
@@ -48,7 +48,8 @@ export default function QASection({ qas, fetchData }: QASectionProps) {
         body: JSON.stringify({ type: 'qa', data: { question, answer } }),
       });
       if (!response.ok) throw new Error('Failed to add Q&A');
-      await fetchData();
+       const newQA = await response.json();
+       setQAs([...qas, newQA]);
       form.reset();
       toast({
         title: 'Success',
@@ -74,7 +75,8 @@ export default function QASection({ qas, fetchData }: QASectionProps) {
         body: JSON.stringify({ type: 'qa', id: qa.id, data: qa }),
       });
       if (!response.ok) throw new Error('Failed to update Q&A');
-      await fetchData();
+      const updatedQA = await response.json();
+      setQAs(qas.map((item) => (item.id === qa.id ? updatedQA : item)));
       setEditingItem(null);
       setIsEditModalOpen(false);
       toast({
@@ -101,7 +103,7 @@ export default function QASection({ qas, fetchData }: QASectionProps) {
         body: JSON.stringify({ type: 'qa', id }),
       });
       if (!response.ok) throw new Error('Failed to delete Q&A');
-      await fetchData();
+      setQAs(qas.filter((qa) => qa.id !== id));
       toast({
         title: 'Success',
         description: 'Q&A deleted successfully',

@@ -6,17 +6,25 @@ import {
   Video,
   Package,
   Image as ImageIcon,
+  ChartColumnBig,
+  Star
 } from 'lucide-react';
 
-export default function Sidebar({ activeTab, setActiveTab }:{
+export default function Sidebar({
+  activeTab,
+  setActiveTab,
+}: {
   activeTab: string;
-  setActiveTab: (tab: string) => void;}) {
+  setActiveTab: (tab: string) => void;
+}) {
   const sidebarItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'FAQ', label: 'FAQ', icon: FileQuestion },
     { id: 'videos', label: 'Videos', icon: Video },
     { id: 'products', label: 'Products', icon: Package },
     { id: 'banners', label: 'Banners', icon: ImageIcon },
+    { id: 'Reviews', label: 'Reviews', icon: Star },
+    { id: 'Stats', label: 'Stats', icon: ChartColumnBig },
   ];
 
   return (
