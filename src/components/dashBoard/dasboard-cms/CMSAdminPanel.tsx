@@ -13,6 +13,7 @@ import DasboardContextProvider, {
 } from './DashboardContext/DasboardContext';
 import DynamicStatsSection from './Stats/Stats';
 import CustomerReviewsSection from './Reviews/CustomerReviews';
+import GallerySection from './Galley/Galley';
 
 export default function CMSAdminPanel() {
   return (
@@ -56,7 +57,7 @@ function Panel() {
       <main className="flex-1 p-8 overflow-auto">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList>
-            {['dashboard', 'FAQ', 'videos', 'products', 'banners', 'Reviews', 'Stats'].map(
+            {['dashboard', 'FAQ', 'videos', 'products', 'banners', 'Reviews', "Gallery", 'Stats'].map(
               (tab) => (
                 <TabsTrigger key={tab} value={tab}>
                   {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -81,6 +82,9 @@ function Panel() {
           </TabsContent>
           <TabsContent value="Reviews">
             <CustomerReviewsSection />
+          </TabsContent>
+          <TabsContent value="Gallery">
+            <GallerySection />
           </TabsContent>
           <TabsContent value="Stats">
             <DynamicStatsSection />

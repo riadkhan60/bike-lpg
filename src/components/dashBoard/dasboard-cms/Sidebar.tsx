@@ -7,7 +7,8 @@ import {
   Package,
   Image as ImageIcon,
   ChartColumnBig,
-  Star
+  Star,
+  ImageUpIcon
 } from 'lucide-react';
 
 export default function Sidebar({
@@ -24,6 +25,7 @@ export default function Sidebar({
     { id: 'products', label: 'Products', icon: Package },
     { id: 'banners', label: 'Banners', icon: ImageIcon },
     { id: 'Reviews', label: 'Reviews', icon: Star },
+    { id: 'Gallery', label: 'Gallery', icon: ImageUpIcon },
     { id: 'Stats', label: 'Stats', icon: ChartColumnBig },
   ];
 

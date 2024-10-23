@@ -48,6 +48,11 @@ model Banner {
   smallScreenUrl  String
 }
 
+model Images {
+  id    String @id @default(cuid())
+  image String
+}
+
 model stats {
   id    String @id @default(cuid())
   employees Int
