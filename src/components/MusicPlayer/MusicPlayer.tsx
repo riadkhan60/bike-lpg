@@ -46,7 +46,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
           volume -= 0.1;
           audioRef.current.volume = Math.max(0, volume);
         }, 200);
-      }, 10000);
+      }, 5000);
     } catch (error) {
       console.error('Error playing audio:', error);
       setIsPlaying(false);
