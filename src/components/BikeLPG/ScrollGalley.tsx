@@ -45,9 +45,9 @@ export default function ScrollGallery() {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-center h-36">
             <div className="animate-pulse flex space-x-4">
-              <div className="h-36 w-64 bg-gray-700 rounded-lg"></div>
-              <div className="h-36 w-64 bg-gray-700 rounded-lg"></div>
-              <div className="h-36 w-64 bg-gray-700 rounded-lg"></div>
+              <div className="h-36 max-w-64 bg-gray-700 rounded-lg"></div>
+              <div className="h-36 max-w-64 bg-gray-700 rounded-lg"></div>
+              <div className="h-36 max-w-64 bg-gray-700 rounded-lg"></div>
             </div>
           </div>
         </div>
