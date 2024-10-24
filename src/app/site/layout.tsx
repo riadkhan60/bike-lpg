@@ -10,6 +10,9 @@ export default function layout({ children }: { children: React.ReactNode }) {
         <div>
           <Navigation />
         </div>
+        <div className='mt-[65px]'>
+
+        </div>
         {children}
         <div>
           <Footer/>

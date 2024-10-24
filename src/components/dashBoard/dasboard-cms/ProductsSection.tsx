@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react';
 import Image from 'next/image';
-import { Edit, Trash } from 'lucide-react';
+import { Edit, Loader2, Trash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -235,7 +235,14 @@ export default function Component() {
               </div>
             </div>
             <Button disabled={isSubmitting} type="submit" className="mt-4">
-              Add Product
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Uploading...
+                </>
+              ) : (
+                'Add Product'
+              )}
             </Button>
           </form>
         </CardContent>
@@ -245,50 +252,56 @@ export default function Component() {
           <CardTitle>Existing Products</CardTitle>
         </CardHeader>
         <CardContent>
-          {products.map((product) => (
-            <div key={product.id} className="mb-4 p-4 border rounded">
-              <h3 className="font-semibold">{product.name}</h3>
-              <p>{product.description}</p>
-              <p className="font-bold mt-2">
-                ${product.price.toFixed(2)}
-                {product.offerPrice && (
-                  <span className="ml-2 text-green-600">
-                    Offer: ${product.offerPrice.toFixed(2)}
-                  </span>
-                )}
-              </p>
-              {product.imageUrl && (
-                <Image
-                  src={product.imageUrl}
-                  alt={product.name}
-                  width={400}
-                  height={400}
-                  className="mt-2 max-w-xs"
-                />
-              )}
-              <div className="mt-2 flex space-x-2">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => {
-                    setEditingItem(product);
-                    setIsEditModalOpen(true);
-                  }}
-                >
-                  <Edit className="h-4 w-4 mr-2" />
-                  Edit
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => handleDeleteProduct(product.id)}
-                >
-                  <Trash className="h-4 w-4 mr-2" />
-                  Delete
-                </Button>
-              </div>
+          {products.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">
+              No products uploaded yet.
             </div>
-          ))}
+          ) : (
+            products.map((product) => (
+              <div key={product.id} className="mb-4 p-4 border rounded">
+                <h3 className="font-semibold">{product.name}</h3>
+                <p>{product.description}</p>
+                <p className="font-bold mt-2">
+                  ${product.price.toFixed(2)}
+                  {product.offerPrice && (
+                    <span className="ml-2 text-green-600">
+                      Offer: ${product.offerPrice.toFixed(2)}
+                    </span>
+                  )}
+                </p>
+                {product.imageUrl && (
+                  <Image
+                    src={product.imageUrl}
+                    alt={product.name}
+                    width={400}
+                    height={400}
+                    className="mt-2 max-w-xs"
+                  />
+                )}
+                <div className="mt-2 flex space-x-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      setEditingItem(product);
+                      setIsEditModalOpen(true);
+                    }}
+                  >
+                    <Edit className="h-4 w-4 mr-2" />
+                    Edit
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleDeleteProduct(product.id)}
+                  >
+                    <Trash className="h-4 w-4 mr-2" />
+                    Delete
+                  </Button>
+                </div>
+              </div>
+            ))
+          )}
         </CardContent>
       </Card>
       <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
@@ -334,40 +347,42 @@ export default function Component() {
                     required
                   />
                 </div>
-                <div className="flex flex-col space-y-1.5">
-                  <Label htmlFor="editProductPrice">Product Price</Label>
-                  <Input
-                    id="editProductPrice"
-                    type="number"
-                    step="0.01"
-                    value={editingItem.price}
-                    onChange={(e) =>
-                      setEditingItem({
-                        ...editingItem,
-                        price: parseFloat(e.target.value),
-                      })
-                    }
-                    required
-                  />
-                </div>
-                <div className="flex flex-col space-y-1.5">
-                  <Label htmlFor="editProductOfferPrice">
-                    Offer Price (optional)
-                  </Label>
-                  <Input
-                    id="editProductOfferPrice"
-                    type="number"
-                    step="0.01"
-                    value={editingItem.offerPrice || ''}
-                    onChange={(e) =>
-                      setEditingItem({
-                        ...editingItem,
-                        offerPrice: e.target.value
-                          ? parseFloat(e.target.value)
-                          : null,
-                      })
-                    }
-                  />
+                <div className='flex gap-2 justify-between my-2'>
+                  <div className="flex flex-col space-y-1.5">
+                    <Label htmlFor="editProductPrice">Product Price</Label>
+                    <Input
+                      id="editProductPrice"
+                      type="number"
+                      step="0.01"
+                      value={editingItem.price}
+                      onChange={(e) =>
+                        setEditingItem({
+                          ...editingItem,
+                          price: parseFloat(e.target.value),
+                        })
+                      }
+                      required
+                    />
+                  </div>
+                  <div className="flex flex-col space-y-1.5">
+                    <Label htmlFor="editProductOfferPrice">
+                      Offer Price (optional)
+                    </Label>
+                    <Input
+                      id="editProductOfferPrice"
+                      type="number"
+                      step="0.01"
+                      value={editingItem.offerPrice || ''}
+                      onChange={(e) =>
+                        setEditingItem({
+                          ...editingItem,
+                          offerPrice: e.target.value
+                            ? parseFloat(e.target.value)
+                            : null,
+                        })
+                      }
+                    />
+                  </div>
                 </div>
                 <div className="flex flex-col space-y-1.5">
                   <Label htmlFor="editProductImage">Product Image</Label>
@@ -384,13 +399,20 @@ export default function Component() {
                     alt={editingItem.name}
                     width={400}
                     height={400}
-                    className="mt-2 max-w-xs"
+                    className="mt-2 max-h-[200px] object-cover max-w-xs"
                   />
                 )}
               </div>
               <DialogFooter className="mt-4">
                 <Button disabled={isSubmitting} type="submit">
-                  Save changes
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Updating...
+                    </>
+                  ) : (
+                    'Save changes'
+                  )}
                 </Button>
               </DialogFooter>
             </form>

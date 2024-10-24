@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Facebook, Instagram, Linkedin, Twitter } from 'lucide-react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import Container from '../LocalUi/container/Container';
 
 export default function FooterElements({authButton}:{authButton: React.ReactNode}) {
   const currentYear = new Date().getFullYear();
@@ -33,13 +34,14 @@ export default function FooterElements({authButton}:{authButton: React.ReactNode
   };
 
   return (
+    <Container>
     <motion.footer
       initial="hidden"
       animate="visible"
       variants={containerVariants}
       className="bg-white text-gray-800 border-t border-gray-200"
     >
-      <div className="container mx-auto px-4 py-12 md:py-16">
+      <div className=" mx-auto  py-12 md:py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <motion.div variants={itemVariants} className="space-y-4">
             <h3 className="text-lg font-semibold text-gray-900">
@@ -138,5 +140,6 @@ export default function FooterElements({authButton}:{authButton: React.ReactNode
         </motion.div>
       </div>
     </motion.footer>
+      </Container>
   );
 }

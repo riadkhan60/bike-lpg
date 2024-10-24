@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Edit, Trash } from 'lucide-react';
+import { Edit, Loader2, Trash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -156,7 +156,14 @@ export default function CustomerReviewsSection() {
               </div>
             </div>
             <Button disabled={isSubmitting} type="submit" className="mt-4">
-              Add Review
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Uploading...
+                </>
+              ) : (
+                'Add Review'
+              )}
             </Button>
           </form>
         </CardContent>
@@ -167,40 +174,46 @@ export default function CustomerReviewsSection() {
           <CardTitle>Customer Reviews</CardTitle>
         </CardHeader>
         <CardContent>
-          {reviews.map((review) => (
-            <div key={review.id} className="mb-4 p-4 border rounded">
-              <div className="flex justify-between items-start">
-                <div>
-                  <h3 className="font-semibold">{review.name}</h3>
-                  <p className="text-sm text-muted-foreground">
-                    {review.occupation}
-                  </p>
-                </div>
-                <div className="flex space-x-2">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => {
-                      setEditingItem(review);
-                      setIsEditModalOpen(true);
-                    }}
-                  >
-                    <Edit className="h-4 w-4 mr-2" />
-                    Edit
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => handleDeleteReview(review.id)}
-                  >
-                    <Trash className="h-4 w-4 mr-2" />
-                    Delete
-                  </Button>
-                </div>
-              </div>
-              <p className="mt-2">{review.review}</p>
+          {reviews.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">
+              No reviews added yet
             </div>
-          ))}
+          ) : (
+            reviews.map((review) => (
+              <div key={review.id} className="mb-4 p-4 border rounded">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h3 className="font-semibold">{review.name}</h3>
+                    <p className="text-sm text-muted-foreground">
+                      {review.occupation}
+                    </p>
+                  </div>
+                  <div className="flex space-x-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        setEditingItem(review);
+                        setIsEditModalOpen(true);
+                      }}
+                    >
+                      <Edit className="h-4 w-4 mr-2" />
+                      Edit
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleDeleteReview(review.id)}
+                    >
+                      <Trash className="h-4 w-4 mr-2" />
+                      Delete
+                    </Button>
+                  </div>
+                </div>
+                <p className="mt-2">{review.review}</p>
+              </div>
+            ))
+          )}
         </CardContent>
       </Card>
 
@@ -263,7 +276,14 @@ export default function CustomerReviewsSection() {
               </div>
               <DialogFooter className="mt-4">
                 <Button disabled={isSubmitting} type="submit">
-                  Save changes
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Updating...
+                    </>
+                  ) : (
+                    'Save changes'
+                  )}
                 </Button>
               </DialogFooter>
             </form>

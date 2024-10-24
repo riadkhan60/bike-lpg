@@ -42,8 +42,8 @@ export default function Customers() {
 
   return (
     <Container>
-      <section ref={sectionRef} className="py-12 px-4 sm:px-6 lg:px-8">
-        <div className="flex max-lg:flex-col justify-between items-center gap-20">
+      <section ref={sectionRef} className="py-12 ">
+        <div className="flex max-lg:flex-col justify-center items-center gap-20">
           <div className="grid grid-cols-2 gap-5">
             {/* Left side (Orange and Teal from the pattern) */}
             <motion.div

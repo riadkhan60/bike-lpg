@@ -306,55 +306,63 @@ import Container from '../LocalUi/container/Container';
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = React.useState(false);
+
   return (
-    <Container>
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-16 items-center justify-between">
-          <div className="flex flex-1 items-center justify-start lg:hidden">
-            <Link href="/" className="flex items-center space-x-2">
-              <span className="font-bold text-xl">MS Jannat Inc</span>
-            </Link>
-          </div>
+    <div className="fixed top-0 w-full z-50">
+      <header className="w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <Container>
+          <div className=" mx-auto">
+            <div className="flex h-16 relative items-center justify-between  mx-auto ">
+              {/* Mobile Logo & Menu */}
+              <div className="flex items-center justify-between w-full xl:hidden">
+                <Link href="/" className="flex items-center">
+                  <span className="font-bold text-xl">MS Jannat Inc</span>
+                </Link>
+                <Sheet open={isOpen} onOpenChange={setIsOpen}>
+                  <SheetTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      className="px-0 text-base hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
+                    >
+                      <Menu className="h-5 w-5" />
+                      <span className="sr-only">Toggle menu</span>
+                    </Button>
+                  </SheetTrigger>
+                  <SheetContent side="right" className="pr-0">
+                    <div className="mt-12">
+                      <MobileNav onNavigate={() => setIsOpen(false)} />
+                    </div>
+                  </SheetContent>
+                </Sheet>
+              </div>
 
-          <div className="hidden lg:flex flex-1 items-center">
-            <nav className="flex items-center space-x-6 text-[16px] font-medium">
-              <DesktopNav items={MENU_ITEMS_LEFT} />
-            </nav>
-          </div>
+              {/* Desktop Navigation */}
+              <div className="hidden xl:flex w-full items-center justify-between">
+                {/* Left Menu */}
+                <nav className="flex items-center space-x-6 text-base font-medium">
+                  <DesktopNav items={MENU_ITEMS_LEFT} />
+                </nav>
 
-          <div className="flex items-center lg:hidden">
-            <Sheet open={isOpen} onOpenChange={setIsOpen}>
-              <SheetContent side="right" className="pr-0">
-                <div className="mt-12">
-                  <MobileNav onNavigate={() => setIsOpen(false)} />
-                </div>
-              </SheetContent>
-              <SheetTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className="mr-2 px-0 text-base hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
+                {/* Center Logo */}
+                <Link
+                  href="/"
+                  className=" absolute left-1/2 translate-x-[-50%] "
                 >
-                  <Menu className="h-5 w-5" />
-                  <span className="sr-only">Toggle menu</span>
-                </Button>
-              </SheetTrigger>
-            </Sheet>
-          </div>
+                  <span className="font-bold text-xl whitespace-nowrap">
+                    MS Jannat
+                  </span>
+                </Link>
 
-          <div className="hidden lg:flex flex-1 items-center justify-center">
-            <Link href="/" className="flex items-center space-x-2">
-              <span className="font-bold text-xl">MS Jannat</span>
-            </Link>
+                {/* Right Menu */}
+                <nav className="flex items-center space-x-6 text-base font-medium">
+                  <DesktopNav items={MENU_ITEMS_RIGHT} />
+                </nav>
+              </div>
+            </div>
           </div>
-
-          <div className="hidden lg:flex flex-1 items-center justify-end">
-            <nav className="flex items-center space-x-6 text-[16px] font-medium">
-              <DesktopNav items={MENU_ITEMS_RIGHT} />
-            </nav>
-          </div>
-        </div>
+        </Container>
       </header>
-    </Container>
+    </div>
   );
 }
 
@@ -368,7 +376,7 @@ function DesktopNav({ items }: { items: typeof MENU_ITEMS_LEFT }) {
           key={item.id}
           href={item.path}
           className={cn(
-            'transition-colors hover:text-[#FF9900]',
+            'transition-colors hover:text-[#FF9900] whitespace-nowrap',
             pathname === item.path ? 'text-[#FF9900]' : 'text-foreground/60',
           )}
         >
@@ -383,32 +391,30 @@ function MobileNav({ onNavigate }: { onNavigate: () => void }) {
   const pathname = usePathname();
 
   return (
-    <div className="flex flex-col space-y-3">
+    <div className="flex flex-col space-y-4">
       <Link
         href="/"
         onClick={onNavigate}
         className={cn(
-            'text-[#000000] uppercase font-[600] text-[20px] transition-colors hover:text-[#FF9900]',
-            pathname === '/site' && 'text-[#FF9900]',
+          'text-foreground uppercase font-semibold text-lg transition-colors hover:text-[#FF9900]',
+          pathname === '/site' && 'text-[#FF9900]',
         )}
       >
         Home
       </Link>
-      {[...(MENU_ITEMS_LEFT.reverse()), ...MENU_ITEMS_RIGHT].map((item) => (
+      {[...MENU_ITEMS_LEFT, ...MENU_ITEMS_RIGHT].map((item) => (
         <Link
           key={item.id}
           href={item.path}
           onClick={onNavigate}
           className={cn(
-            'text-[#000000] uppercase font-[600] text-[20px] transition-colors hover:text-[#FF9900]',
+            'text-foreground uppercase font-semibold text-lg transition-colors hover:text-[#FF9900]',
             pathname === item.path && 'text-[#FF9900]',
           )}
         >
           {item.name}
         </Link>
       ))}
-
-      <ul></ul>
     </div>
   );
 }

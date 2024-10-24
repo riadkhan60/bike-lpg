@@ -10,6 +10,9 @@ import {
   Star,
   ImageUpIcon
 } from 'lucide-react';
+import { SquareArrowLeft } from 'lucide-react';
+import Link from 'next/link';
+import UserSettingsModal from './UsersSettings/UserSettings';
 
 export default function Sidebar({
   activeTab,
@@ -30,7 +33,7 @@ export default function Sidebar({
   ];
 
   return (
-    <aside className="w-64 bg-white p-4">
+    <aside className="w-64 h-screen flex flex-col bg-white p-4">
       <h1 className="text-2xl font-bold mb-6">Hello, Admin 👋</h1>
       <div className="bg-gray-200 mb-5 flex items-center justify-center rounded-full w-10 h-10">
         <SignedIn>
@@ -52,6 +55,16 @@ export default function Sidebar({
           </Button>
         ))}
       </nav>
+      <div className='mt-auto'>
+        <UserSettingsModal />
+        <Button
+          variant="secondary"
+          className={`w-full justify-start mb-2`}
+        >
+          <SquareArrowLeft className="mr-2 h-4 w-4" />
+          <Link href={'/'}>Go Home</Link>
+        </Button>
+      </div>
     </aside>
   );
 }

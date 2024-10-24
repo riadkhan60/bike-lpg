@@ -39,7 +39,7 @@ export default function Owner() {
   return (
     <section
       ref={ref}
-      className="w-full py-16 md:py-24 lg:py-32 lg:mt-20 mt-5  bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 overflow-hidden"
+      className="w-full flex justify-center items-center py-16 md:py-24 lg:py-32 lg:mt-20 mt-5  bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 overflow-hidden"
     >
       <Container>
         <motion.div
@@ -47,7 +47,7 @@ export default function Owner() {
           initial="hidden"
           animate={inView ? 'visible' : 'hidden'}
           variants={containerVariants}
-          className="container px-4 md:px-6"
+          className=""
         >
           <motion.h2
             variants={itemVariants}

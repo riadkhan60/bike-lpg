@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react';
 import Image from 'next/image';
-import { Edit, Trash } from 'lucide-react';
+import { Edit, Loader2, Trash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -22,8 +22,6 @@ interface Banner {
   largeScreenUrl: string;
   smallScreenUrl?: string;
 }
-
-
 
 export default function BannersSection() {
   const { banners, setBanners } = useDashboardContext();
@@ -94,7 +92,7 @@ export default function BannersSection() {
         title: 'Success',
         description: 'Banner added successfully',
       });
-    } catch  {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to add banner',
@@ -132,17 +130,17 @@ export default function BannersSection() {
         }),
       });
       if (!response.ok) throw new Error('Failed to update banner');
-     const updatedBanner = await response.json();
-     setBanners(
-       banners.map((item) => (item.id === banner.id ? updatedBanner : item)),
-     );
+      const updatedBanner = await response.json();
+      setBanners(
+        banners.map((item) => (item.id === banner.id ? updatedBanner : item)),
+      );
       setEditingItem(null);
       setIsEditModalOpen(false);
       toast({
         title: 'Success',
         description: 'Banner updated successfully',
       });
-    } catch  {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to update banner',
@@ -167,7 +165,7 @@ export default function BannersSection() {
         title: 'Success',
         description: 'Banner deleted successfully',
       });
-    } catch  {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to delete banner',
@@ -198,15 +196,18 @@ export default function BannersSection() {
               </div>
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="smallScreenBanner">Small Screen Banner</Label>
-                <Input
-                  id="smallScreenBanner"
-                  type="file"
-                  accept="image/*"
-                />
+                <Input id="smallScreenBanner" type="file" accept="image/*" />
               </div>
             </div>
             <Button disabled={isSubmitting} type="submit" className="mt-4">
-              Add Banner
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Uploading...
+                </>
+              ) : (
+                'Add Banner'
+              )}
             </Button>
           </form>
         </CardContent>
@@ -216,54 +217,64 @@ export default function BannersSection() {
           <CardTitle>Existing Banners</CardTitle>
         </CardHeader>
         <CardContent>
-          {banners.map((banner, index) => (
-            <div key={banner.id} className="mb-4 p-4 border rounded">
-              <h3 className="font-semibold">Banner {index + 1}</h3>
-              <div className="mt-2 grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <p className="font-bold">Large Screen:</p>
-                  <Image
-                    src={banner.largeScreenUrl}
-                    alt="Large Screen Banner"
-                    width={400}
-                    height={200}
-                    className="mt-2 max-w-full h-auto rounded-lg"
-                  />
-                </div>
-                <div>
-                  <p className="font-bold">Small Screen:</p>
-                 {banner.smallScreenUrl ? <Image
-                    src={banner.smallScreenUrl}
-                    alt="Small Screen Banner"
-                    width={200}
-                    height={200}
-                    className="mt-2 max-w-full h-auto rounded-lg"
-                  /> : <p>No small screen banner</p>}
-                </div>
-              </div>
-              <div className="mt-2 flex space-x-2">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => {
-                    setEditingItem(banner);
-                    setIsEditModalOpen(true);
-                  }}
-                >
-                  <Edit className="h-4 w-4 mr-2" />
-                  Edit
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => handleDeleteBanner(banner.id)}
-                >
-                  <Trash className="h-4 w-4 mr-2" />
-                  Delete
-                </Button>
-              </div>
+          {banners.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">
+              No banners found yet
             </div>
-          ))}
+          ) : (
+            banners.map((banner, index) => (
+              <div key={banner.id} className="mb-4 p-4 border rounded">
+                <h3 className="font-semibold">Banner {index + 1}</h3>
+                <div className="mt-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <p className="font-bold">Large Screen:</p>
+                    <Image
+                      src={banner.largeScreenUrl}
+                      alt="Large Screen Banner"
+                      width={400}
+                      height={200}
+                      className="mt-2 max-w-full h-auto rounded-lg"
+                    />
+                  </div>
+                  <div>
+                    <p className="font-bold">Small Screen:</p>
+                    {banner.smallScreenUrl ? (
+                      <Image
+                        src={banner.smallScreenUrl}
+                        alt="Small Screen Banner"
+                        width={200}
+                        height={200}
+                        className="mt-2 max-w-full h-auto rounded-lg"
+                      />
+                    ) : (
+                      <p>No small screen banner</p>
+                    )}
+                  </div>
+                </div>
+                <div className="mt-2 flex space-x-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      setEditingItem(banner);
+                      setIsEditModalOpen(true);
+                    }}
+                  >
+                    <Edit className="h-4 w-4 mr-2" />
+                    Edit
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleDeleteBanner(banner.id)}
+                  >
+                    <Trash className="h-4 w-4 mr-2" />
+                    Delete
+                  </Button>
+                </div>
+              </div>
+            ))
+          )}
         </CardContent>
       </Card>
       <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
@@ -322,7 +333,14 @@ export default function BannersSection() {
               </div>
               <DialogFooter className="mt-4">
                 <Button disabled={isSubmitting} type="submit">
-                  Save changes
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Updating...
+                    </>
+                  ) : (
+                    'Save changes'
+                  )}
                 </Button>
               </DialogFooter>
             </form>

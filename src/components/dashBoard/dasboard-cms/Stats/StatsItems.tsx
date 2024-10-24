@@ -1,5 +1,6 @@
 'use client';
 
+import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
 
 interface StatsInputProps {
@@ -19,6 +20,7 @@ export default function StatsInput({
   icon,
 }: StatsInputProps) {
   const [value, setValue] = useState(initialValue);
+  const { toast } = useToast();
 
   const handleBlur = async () => {
     try {
@@ -32,9 +34,12 @@ export default function StatsInput({
           field,
           value,
         }),
-        
       });
 
+      toast({
+        title: 'Success',
+        description: `Stats ${label} : ${value} updated successfully`,
+      })
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.message);
