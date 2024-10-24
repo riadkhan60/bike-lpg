@@ -114,7 +114,7 @@ export default function AllBusinessCards() {
   return (
     <Container>
       <section className="bg-background py-12 ">
-        <div className="max-w-7xl mx-auto">
+        <div className="mx-auto">
           <motion.h2
             className="text-3xl font-bold text-center text-primary mb-8"
             initial={{ opacity: 0, y: -20 }}

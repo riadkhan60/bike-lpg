@@ -65,7 +65,7 @@ export default function CompanyOverview() {
   return (
     <Container>
       <section className="bg-background py-12 ">
-        <div className="max-w-7xl mx-auto">
+        <div className=" mx-auto">
           <motion.div
             className="text-center mb-12"
             ref={headerRef}

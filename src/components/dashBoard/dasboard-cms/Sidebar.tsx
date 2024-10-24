@@ -12,7 +12,6 @@ import {
 } from 'lucide-react';
 import { SquareArrowLeft } from 'lucide-react';
 import Link from 'next/link';
-import UserSettingsModal from './UsersSettings/UserSettings';
 
 export default function Sidebar({
   activeTab,
@@ -56,7 +55,6 @@ export default function Sidebar({
         ))}
       </nav>
       <div className='mt-auto'>
-        <UserSettingsModal />
         <Button
           variant="secondary"
           className={`w-full justify-start mb-2`}
