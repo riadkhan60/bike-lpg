@@ -2,10 +2,11 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
-import { Trash, Loader2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Trash, Loader2, Upload, ImagePlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from '@/hooks/use-toast';
 
@@ -28,9 +29,9 @@ export default function GallerySection() {
   const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [dragActive, setDragActive] = useState(false);
   const imageFileInputRef = useRef<HTMLInputElement>(null);
 
-  // Fetch gallery images when the component loads
   useEffect(() => {
     const fetchGalleryImages = async () => {
       try {
@@ -60,42 +61,28 @@ export default function GallerySection() {
     fetchGalleryImages();
   }, []);
 
-  const handleImageUpload = async (file: File): Promise<string> => {
-    const formData = new FormData();
-    formData.append('image', file);
-
-    const response = await fetch('/api/upload', {
-      method: 'POST',
-      body: formData,
-    });
-
-    if (!response.ok) {
-      const errorData: APIError = await response
-        .json()
-        .catch(() => ({ error: 'Upload failed' }));
-      throw new Error(errorData.error || `Upload failed (${response.status})`);
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === 'dragenter' || e.type === 'dragover') {
+      setDragActive(true);
+    } else if (e.type === 'dragleave') {
+      setDragActive(false);
     }
-
-    const data: UploadResponse = await response.json();
-    return data.url;
   };
 
-  const handleAddImage = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const form = event.currentTarget;
-    const file = imageFileInputRef.current?.files?.[0];
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
 
-    // File validation
-    if (!file) {
-      toast({
-        title: 'Error',
-        description: 'Please select an image to upload',
-        variant: 'destructive',
-      });
-      return;
+    const file = e.dataTransfer.files?.[0];
+    if (file) {
+      await handleFileUpload(file);
     }
+  };
 
-    // Validate file type
+  const handleFileUpload = async (file: File) => {
     if (!file.type.startsWith('image/')) {
       toast({
         title: 'Error',
@@ -105,8 +92,7 @@ export default function GallerySection() {
       return;
     }
 
-    // Validate file size (e.g., 5MB limit)
-    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+    const MAX_FILE_SIZE = 5 * 1024 * 1024;
     if (file.size > MAX_FILE_SIZE) {
       toast({
         title: 'Error',
@@ -118,50 +104,47 @@ export default function GallerySection() {
 
     try {
       setIsSubmitting(true);
+      const formData = new FormData();
+      formData.append('image', file);
 
-      // Upload image first
-      const imageUrl = await handleImageUpload(file);
-
-      // Save image to database
-      const response = await fetch('/api/gallery', {
+      const uploadResponse = await fetch('/api/upload', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          image: imageUrl,
-        }),
+        body: formData,
       });
 
-      if (!response.ok) {
-        const errorData: APIError = await response
-          .json()
-          .catch(() => ({ error: 'Failed to save image' }));
-        throw new Error(
-          errorData.error || `Failed to save image (${response.status})`,
-        );
+      if (!uploadResponse.ok) {
+        throw new Error('Upload failed');
       }
 
-      const newImage: GalleryImage = await response.json();
+      const { url }: UploadResponse = await uploadResponse.json();
 
-      // Update local state with the new image
-      setGalleryImages((prevImages) => [...prevImages, newImage]);
-
-      // Show success message
-      toast({
-        title: 'Success',
-        description: 'Image added successfully',
+      const saveResponse = await fetch('/api/gallery', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image: url }),
       });
 
-      // Reset form and file input
-      form.reset();
+      if (!saveResponse.ok) {
+        throw new Error('Failed to save image');
+      }
+
+      const newImage: GalleryImage = await saveResponse.json();
+      setGalleryImages((prev) => [...prev, newImage]);
+
+      toast({
+        title: 'Success',
+        description: 'Image uploaded successfully',
+      });
+
       if (imageFileInputRef.current) {
         imageFileInputRef.current.value = '';
       }
     } catch (error) {
-      console.error('Add image error:', error);
+      console.error('Upload error:', error);
       toast({
         title: 'Error',
         description:
-          error instanceof Error ? error.message : 'Failed to add image',
+          error instanceof Error ? error.message : 'Failed to upload image',
         variant: 'destructive',
       });
     } finally {
@@ -179,14 +162,10 @@ export default function GallerySection() {
       });
 
       if (!response.ok) {
-        const errorData: APIError = await response
-          .json()
-          .catch(() => ({ error: 'Failed to delete image' }));
-        throw new Error(errorData.error || 'Failed to delete image');
+        throw new Error('Failed to delete image');
       }
 
-      setGalleryImages(galleryImages.filter((image) => image.id !== id));
-
+      setGalleryImages((prev) => prev.filter((image) => image.id !== id));
       toast({
         title: 'Success',
         description: 'Image deleted successfully',
@@ -206,83 +185,133 @@ export default function GallerySection() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[200px]">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="flex h-screen w-full items-center justify-center">
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+        >
+          <Loader2 className="h-12 w-12 " />
+        </motion.div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Add New Image</CardTitle>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="space-y-8 "
+    >
+      <Card className="overflow-hidden bg-gradient-to-br from-white to-gray-50">
+        <CardHeader className="border-b bg-white/50 backdrop-blur-sm">
+          <CardTitle className="flex items-center gap-2">
+            <ImagePlus className="h-5 w-5" />
+            Add New Image
+          </CardTitle>
         </CardHeader>
-        <CardContent>
-          <form onSubmit={handleAddImage}>
-            <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="galleryImage">Gallery Image</Label>
-              <Input
-                id="galleryImage"
-                type="file"
-                accept="image/*"
-                ref={imageFileInputRef}
+        <CardContent className="p-6">
+          <div
+            className={`relative rounded-lg border-2 border-dashed p-8 transition-colors ${
+              dragActive ? 'border-blue-500 bg-blue-50' : 'border-gray-200'
+            }`}
+            onDragEnter={handleDrag}
+            onDragLeave={handleDrag}
+            onDragOver={handleDrag}
+            onDrop={handleDrop}
+          >
+            <Input
+              id="galleryImage"
+              type="file"
+              accept="image/*"
+              ref={imageFileInputRef}
+              disabled={isSubmitting}
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) handleFileUpload(file);
+              }}
+            />
+            <div className="flex flex-col items-center justify-center text-center">
+              <Upload className="mb-4 h-12 w-12 text-gray-400" />
+              <p className="mb-2 text-lg font-medium">
+                Drag and drop your image here
+              </p>
+              <p className="mb-4 text-sm text-gray-500">or</p>
+              <Button
+                type="button"
                 disabled={isSubmitting}
-              />
+                onClick={() => imageFileInputRef.current?.click()}
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Uploading...
+                  </>
+                ) : (
+                  'Select Image'
+                )}
+              </Button>
             </div>
-            <Button disabled={isSubmitting} type="submit" className="mt-4">
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Uploading...
-                </>
-              ) : (
-                'Add Image'
-              )}
-            </Button>
-          </form>
+          </div>
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
+      <Card className="overflow-hidden">
+        <CardHeader className="border-b">
           <CardTitle>Gallery</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-6">
           {galleryImages.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              No images uploaded yet.
-            </div>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex flex-col items-center justify-center py-12 text-gray-500"
+            >
+              <ImagePlus className="mb-4 h-16 w-16" />
+              <p className="text-lg font-medium">No images uploaded yet</p>
+              <p className="text-sm">Upload your first image to get started</p>
+            </motion.div>
           ) : (
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {galleryImages.map((image, index) => (
-                <div key={image.id} className="p-4 border rounded">
-                  <h3 className="font-semibold">Image {index + 1}</h3>
-                  <div className="relative aspect-video mt-2">
-                    <Image
-                      src={image.image}
-                      alt={`Gallery Image ${index + 1}`}
-                      fill
-                      className="object-cover rounded-lg"
-                    />
-                  </div>
-                  <div className="mt-2 flex space-x-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      disabled={isSubmitting}
-                      onClick={() => handleDeleteImage(image.id)}
-                    >
-                      <Trash className="h-4 w-4 mr-2" />
-                      Delete
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <motion.div
+              layout
+              className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
+            >
+              <AnimatePresence>
+                {galleryImages.map((image, index) => (
+                  <motion.div
+                    key={image.id}
+                    layout
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    whileHover={{ scale: 1.02 }}
+                    className="group relative overflow-hidden rounded-xl border bg-white shadow-sm transition-shadow hover:shadow-lg"
+                  >
+                    <div className="relative aspect-video">
+                      <Image
+                        src={image.image}
+                        alt={`Gallery Image ${index + 1}`}
+                        fill
+                        className="object-cover"
+                      />
+                      <div className="absolute inset-0 bg-black/40 opacity-0 transition-opacity group-hover:opacity-100" />
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        disabled={isSubmitting}
+                        onClick={() => handleDeleteImage(image.id)}
+                        className="absolute right-2 top-2 opacity-0 transition-opacity group-hover:opacity-100"
+                      >
+                        <Trash className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </motion.div>
           )}
         </CardContent>
       </Card>
-    </div>
+    </motion.div>
   );
 }

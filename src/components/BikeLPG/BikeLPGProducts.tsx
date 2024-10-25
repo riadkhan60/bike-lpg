@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { ShoppingCart } from 'lucide-react';
 import Image from 'next/image';
 import Container from '../LocalUi/container/Container';
+import {  currencyFormatter } from '@/lib/currencyFormater';
 
 interface Product {
   id: number;
@@ -50,11 +51,11 @@ const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
         <CardContent className="p-4">
           <CardTitle className="text-lg mb-2">{product.name}</CardTitle>
           <div className="flex items-center space-x-2">
-            <span className="text-2xl font-bold text-primary">
-              ৳{product.offerPrice}
+            <span className="text-[20px] text-[#525252] font-bold ">
+              { currencyFormatter(product.offerPrice)}
             </span>
             <span className="text-sm text-gray-500 line-through">
-              ৳{product.price}
+              { currencyFormatter(product.price)}
             </span>
           </div>
         </CardContent>

@@ -18,7 +18,7 @@ export default function Dashboard() {
       </CardHeader>
       <CardContent>
         <p className="mb-5">
-          Select a tab to manage Q&A, Videos, Banners or Products.
+          Select a tab to manage your content & database.
         </p>
         <div className="border-2 w-fit p-2 border-gray-200 rounded-md ">
           <Link href={'/'}>

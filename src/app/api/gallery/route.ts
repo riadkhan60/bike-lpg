@@ -55,7 +55,9 @@ export async function POST(request: Request) {
 
 export async function GET() {
   try {
-    const images = await prisma.images.findMany();
+    const images = await prisma.images.findMany(
+      { orderBy: { id: 'asc' } },
+    );
 
     return NextResponse.json(images, { status: 200 });
   } catch (error) {

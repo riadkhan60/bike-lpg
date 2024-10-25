@@ -14,6 +14,8 @@ import DasboardContextProvider, {
 import DynamicStatsSection from './Stats/Stats';
 import CustomerReviewsSection from './Reviews/CustomerReviews';
 import GallerySection from './Galley/Galley';
+import EmailLists from './EmailLists/EmailLists';
+import FormResponseList from './FormResponseList/FormResponseList';
 
 export default function CMSAdminPanel() {
   return (
@@ -57,13 +59,22 @@ function Panel() {
       <main className="flex-1 p-8 overflow-auto">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList>
-            {['dashboard', 'FAQ', 'videos', 'products', 'banners', 'Reviews', "Gallery", 'Stats'].map(
-              (tab) => (
-                <TabsTrigger key={tab} value={tab}>
-                  {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                </TabsTrigger>
-              ),
-            )}
+            {[
+              'dashboard',
+              'FAQ',
+              'videos',
+              'products',
+              'Reviews',
+              'banners',
+              'Gallery',
+              'Stats',
+              'Emails',
+              'Form Responses',
+            ].map((tab) => (
+              <TabsTrigger key={tab} value={tab}>
+                {tab.charAt(0).toUpperCase() + tab.slice(1)}
+              </TabsTrigger>
+            ))}
           </TabsList>
           <TabsContent value="dashboard">
             <Dashboard />
@@ -88,6 +99,12 @@ function Panel() {
           </TabsContent>
           <TabsContent value="Stats">
             <DynamicStatsSection />
+          </TabsContent>
+          <TabsContent value="Emails">
+            <EmailLists />
+          </TabsContent>
+          <TabsContent value="Form Responses">
+            <FormResponseList />
           </TabsContent>
         </Tabs>
       </main>

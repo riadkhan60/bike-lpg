@@ -8,7 +8,9 @@ import {
   Image as ImageIcon,
   ChartColumnBig,
   Star,
-  ImageUpIcon
+  ImageUpIcon,
+  Mails,
+  Book,
 } from 'lucide-react';
 import { SquareArrowLeft } from 'lucide-react';
 import Link from 'next/link';
@@ -25,10 +27,12 @@ export default function Sidebar({
     { id: 'FAQ', label: 'FAQ', icon: FileQuestion },
     { id: 'videos', label: 'Videos', icon: Video },
     { id: 'products', label: 'Products', icon: Package },
-    { id: 'banners', label: 'Banners', icon: ImageIcon },
     { id: 'Reviews', label: 'Reviews', icon: Star },
+    { id: 'banners', label: 'Banners', icon: ImageIcon },
     { id: 'Gallery', label: 'Gallery', icon: ImageUpIcon },
     { id: 'Stats', label: 'Stats', icon: ChartColumnBig },
+    { id: 'Emails', label: 'Emails', icon: Mails },
+    { id: 'Form Responses', label: 'Responses', icon: Book },
   ];
 
   return (

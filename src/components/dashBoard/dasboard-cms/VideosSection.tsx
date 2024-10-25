@@ -2,12 +2,13 @@
 
 import { useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { Edit, Trash, MoveUp, MoveDown, Loader2 } from 'lucide-react';
+import { Edit, Trash, MoveUp, MoveDown, Loader2, Video } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from '@/hooks/use-toast';
+import { motion } from 'framer-motion';
 import {
   Dialog,
   DialogContent,
@@ -193,13 +194,16 @@ export default function VideosSection() {
   };
 
   return (
-    <div className="space-y-6">
+    <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
       <Card>
-        <CardHeader>
-          <CardTitle>Manage Video Links</CardTitle>
+        <CardHeader className="border-b rounded-t-xl  bg-white/50 backdrop-blur-sm">
+          <CardTitle className="flex items-center  gap-2">
+            <Video className="h-5 w-5" />
+            Add New Video Link
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleAddVideoLink} className="mb-6">
+          <form onSubmit={handleAddVideoLink} className=" mt-6">
             <div className="grid w-full items-center gap-4">
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="videoTitle">Video Title</Label>
@@ -313,7 +317,7 @@ export default function VideosSection() {
                           {...provided.dragHandleProps}
                           className="mb-4"
                         >
-                          <Card>
+                          <Card className='shadow-none rounded-md '>
                             <CardContent className="flex justify-between items-center p-4">
                               <div>
                                 <h3 className="font-semibold">{link.title}</h3>
@@ -373,6 +377,6 @@ export default function VideosSection() {
           </DragDropContext>
         </CardContent>
       </Card>
-    </div>
+    </motion.div>
   );
 }

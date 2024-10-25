@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
-import { Edit, Loader2, Trash } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Edit, Loader2, Trash, Plus, Package } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -27,12 +28,18 @@ interface Product {
   imageUrl: string;
 }
 
-export default function Component() {
+export default function ProductGallery() {
   const { products, setProducts } = useDashboardContext();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [editingItem, setEditingItem] = useState<Product | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    // Simulating loading of products
+    setTimeout(() => setIsLoading(false), 200);
+  }, []);
 
   const handleImageUpload = async (file: File): Promise<string> => {
     const formData = new FormData();
@@ -71,7 +78,7 @@ export default function Component() {
       parseFloat(
         (form.elements.namedItem('productOfferPrice') as HTMLInputElement)
           .value,
-      ) || 0;
+      ) || null;
     const imageFile = (
       form.elements.namedItem('productImage') as HTMLInputElement
     ).files?.[0];
@@ -118,15 +125,13 @@ export default function Component() {
         imageUrl = await handleImageUpload(fileInputRef.current.files[0]);
       }
 
-      const offerPrice = product.offerPrice || 0;
-
       const response = await fetch('/api/cms', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           type: 'product',
           id: product.id,
-          data: { ...product, offerPrice, imageUrl },
+          data: { ...product, imageUrl },
         }),
       });
       if (!response.ok) throw new Error('Failed to update product');
@@ -178,14 +183,34 @@ export default function Component() {
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+        >
+          <Loader2 className="h-12 w-12 text-primary" />
+        </motion.div>
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Add New Product</CardTitle>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="space-y-8 "
+    >
+      <Card className="overflow-hidden bg-gradient-to-br from-white to-gray-50">
+        <CardHeader className="border-b bg-white/50 backdrop-blur-sm">
+          <CardTitle className="flex items-center gap-2">
+            <Package className="h-5 w-5" />
+            Add New Product
+          </CardTitle>
         </CardHeader>
-        <CardContent>
-          <form onSubmit={handleAddProduct}>
+        <CardContent className="p-6">
+          <form onSubmit={handleAddProduct} className="space-y-4">
             <div className="grid w-full items-center gap-4">
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="productName">Product Name</Label>
@@ -203,26 +228,28 @@ export default function Component() {
                   required
                 />
               </div>
-              <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="productPrice">Product Price</Label>
-                <Input
-                  id="productPrice"
-                  type="number"
-                  step="0.01"
-                  placeholder="Enter product price"
-                  required
-                />
-              </div>
-              <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="productOfferPrice">
-                  Offer Price (optional)
-                </Label>
-                <Input
-                  id="productOfferPrice"
-                  type="number"
-                  step="0.01"
-                  placeholder="Enter offer price (if applicable)"
-                />
+              <div className="flex flex-col space-y-1.5 sm:flex-row sm:space-y-0 sm:space-x-4">
+                <div className="flex-1">
+                  <Label htmlFor="productPrice">Product Price</Label>
+                  <Input
+                    id="productPrice"
+                    type="number"
+                    step="0.01"
+                    placeholder="Enter product price"
+                    required
+                  />
+                </div>
+                <div className="flex-1">
+                  <Label htmlFor="productOfferPrice">
+                    Offer Price (optional)
+                  </Label>
+                  <Input
+                    id="productOfferPrice"
+                    type="number"
+                    step="0.01"
+                    placeholder="Enter offer price (if applicable)"
+                  />
+                </div>
               </div>
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="productImage">Product Image</Label>
@@ -234,76 +261,114 @@ export default function Component() {
                 />
               </div>
             </div>
-            <Button disabled={isSubmitting} type="submit" className="mt-4">
+            <Button disabled={isSubmitting} type="submit" className="">
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Uploading...
+                  Adding Product...
                 </>
               ) : (
-                'Add Product'
+                <>
+                  <Plus className="mr-2 h-4 w-4" />
+                  Add Product
+                </>
               )}
             </Button>
           </form>
         </CardContent>
       </Card>
-      <Card>
-        <CardHeader>
+
+      <Card className="overflow-hidden">
+        <CardHeader className="border-b">
           <CardTitle>Existing Products</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-6">
           {products.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              No products uploaded yet.
-            </div>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex flex-col items-center justify-center py-12 text-gray-500"
+            >
+              <Package className="mb-4 h-16 w-16" />
+              <p className="text-lg font-medium">No products added yet</p>
+              <p className="text-sm">Add your first product to get started</p>
+            </motion.div>
           ) : (
-            products.map((product) => (
-              <div key={product.id} className="mb-4 p-4 border rounded">
-                <h3 className="font-semibold">{product.name}</h3>
-                <p>{product.description}</p>
-                <p className="font-bold mt-2">
-                  ${product.price.toFixed(2)}
-                  {product.offerPrice && (
-                    <span className="ml-2 text-green-600">
-                      Offer: ${product.offerPrice.toFixed(2)}
-                    </span>
-                  )}
-                </p>
-                {product.imageUrl && (
-                  <Image
-                    src={product.imageUrl}
-                    alt={product.name}
-                    width={400}
-                    height={400}
-                    className="mt-2 max-w-xs"
-                  />
-                )}
-                <div className="mt-2 flex space-x-2">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => {
-                      setEditingItem(product);
-                      setIsEditModalOpen(true);
-                    }}
+            <motion.div
+              layout
+              className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+            >
+              <AnimatePresence>
+                {products.map((product) => (
+                  <motion.div
+                    key={product.id}
+                    layout
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    transition={{ duration: 0.2 }}
                   >
-                    <Edit className="h-4 w-4 mr-2" />
-                    Edit
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => handleDeleteProduct(product.id)}
-                  >
-                    <Trash className="h-4 w-4 mr-2" />
-                    Delete
-                  </Button>
-                </div>
-              </div>
-            ))
+                    <Card className="overflow-hidden">
+                      <CardContent className="p-0">
+                        <div className="relative aspect-video">
+                          <Image
+                            src={product.imageUrl || '/placeholder.svg'}
+                            alt={product.name}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                        <div className="p-4">
+                          <h3 className="font-semibold truncate">
+                            {product.name}
+                          </h3>
+                          <p className="text-sm text-muted-foreground line-clamp-2 h-10">
+                            {product.description}
+                          </p>
+                          <div className="mt-2 flex items-baseline gap-2">
+                            <span className="text-lg font-bold">
+                              ${product.price.toFixed(2)}
+                            </span>
+                            {product.offerPrice && (
+                              <span className="text-sm text-green-600 line-through">
+                                ${product.offerPrice.toFixed(2)}
+                              </span>
+                            )}
+                          </div>
+                          <div className="mt-4 flex space-x-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="flex-1"
+                              onClick={() => {
+                                setEditingItem(product);
+                                setIsEditModalOpen(true);
+                              }}
+                            >
+                              <Edit className="h-4 w-4 mr-2" />
+                              Edit
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="flex-1"
+                              onClick={() => handleDeleteProduct(product.id)}
+                            >
+                              <Trash className="h-4 w-4 mr-2" />
+                              Delete
+                            </Button>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </motion.div>
           )}
         </CardContent>
       </Card>
+
       <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
         <DialogContent>
           <DialogHeader>
@@ -347,8 +412,8 @@ export default function Component() {
                     required
                   />
                 </div>
-                <div className='flex gap-2 justify-between my-2'>
-                  <div className="flex flex-col space-y-1.5">
+                <div className="flex flex-col space-y-1.5 sm:flex-row sm:space-y-0 sm:space-x-4">
+                  <div className="flex-1">
                     <Label htmlFor="editProductPrice">Product Price</Label>
                     <Input
                       id="editProductPrice"
@@ -364,7 +429,7 @@ export default function Component() {
                       required
                     />
                   </div>
-                  <div className="flex flex-col space-y-1.5">
+                  <div className="flex-1">
                     <Label htmlFor="editProductOfferPrice">
                       Offer Price (optional)
                     </Label>
@@ -393,14 +458,16 @@ export default function Component() {
                     ref={fileInputRef}
                   />
                 </div>
+
                 {editingItem.imageUrl && (
-                  <Image
-                    src={editingItem.imageUrl}
-                    alt={editingItem.name}
-                    width={400}
-                    height={400}
-                    className="mt-2 max-h-[200px] object-cover max-w-xs"
-                  />
+                  <div className="relative aspect-video w-full">
+                    <Image
+                      src={editingItem.imageUrl}
+                      alt={editingItem.name}
+                      fill
+                      className="object-cover rounded-md"
+                    />
+                  </div>
                 )}
               </div>
               <DialogFooter className="mt-4">
@@ -419,6 +486,6 @@ export default function Component() {
           )}
         </DialogContent>
       </Dialog>
-    </div>
+    </motion.div>
   );
 }

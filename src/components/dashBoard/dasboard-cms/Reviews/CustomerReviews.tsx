@@ -1,13 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { Edit, Loader2, Trash } from 'lucide-react';
+import { Edit, Loader2, Star, Trash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from '@/hooks/use-toast';
+import { motion } from 'framer-motion';
 import {
   Dialog,
   DialogContent,
@@ -125,14 +126,21 @@ export default function CustomerReviewsSection() {
   };
 
   return (
-    <div className="space-y-6">
+    <motion.div
+      initial={{ opacity: 0, y: 50 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="space-y-6"
+    >
       <Card>
-        <CardHeader>
-          <CardTitle>Add New Customer Review</CardTitle>
+        <CardHeader className="border-b rounded-t-xl  bg-white/50 backdrop-blur-sm">
+          <CardTitle className="flex items-center  gap-2">
+            <Star className="h-5 w-5" />
+            Add New Review
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleAddReview}>
-            <div className="grid w-full items-center gap-4">
+            <div className="grid w-full items-center mt-6 gap-4">
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="name">Customer Name</Label>
                 <Input id="name" placeholder="Enter customer name" required />
@@ -290,6 +298,6 @@ export default function CustomerReviewsSection() {
           )}
         </DialogContent>
       </Dialog>
-    </div>
+    </motion.div>
   );
 }

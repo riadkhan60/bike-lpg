@@ -1,13 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { Edit, Loader2, Trash } from 'lucide-react';
+import { Edit, Loader2, Trash, MessageCircleQuestion } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from '@/hooks/use-toast';
+import { motion } from 'framer-motion';
 import {
   Dialog,
   DialogContent,
@@ -117,14 +118,21 @@ export default function QASection() {
   };
 
   return (
-    <div className="space-y-6">
+    <motion.div
+      initial={{ opacity: 0, y: 50 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="space-y-6"
+    >
       <Card>
-        <CardHeader>
-          <CardTitle>Add New Q&A</CardTitle>
+        <CardHeader className="border-b rounded-t-xl  bg-white/50 backdrop-blur-sm">
+          <CardTitle className="flex items-center  gap-2">
+            <MessageCircleQuestion className="h-5 w-5" />
+            FAQ
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleAddQA}>
-            <div className="grid w-full items-center gap-4">
+            <div className="grid w-full items-center gap-4 mt-6">
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="question">Question</Label>
                 <Input
@@ -241,16 +249,14 @@ export default function QASection() {
                       Updating...
                     </>
                   ) : (
-                    
                     'Save changes'
-                  )
-                  }
+                  )}
                 </Button>
               </DialogFooter>
             </form>
           )}
         </DialogContent>
       </Dialog>
-    </div>
+    </motion.div>
   );
 }
