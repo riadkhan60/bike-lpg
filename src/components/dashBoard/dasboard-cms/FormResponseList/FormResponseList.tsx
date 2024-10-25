@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   Search,
@@ -9,6 +9,7 @@ import {
   Trash2,
   Copy,
   X,
+  Loader2,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -27,23 +28,47 @@ import {
 import { useToast } from '@/hooks/use-toast';
 
 // Mock data for demonstration
-const initialResponses = Array.from({ length: 20 }, (_, i) => ({
-  id: `response-${i + 1}`,
-  firstName: `John${i + 1}`,
-  lastName: `Doe${i + 1}`,
-  email: `johndoe${i + 1}@example.com`,
-  phone: `+1 (555) 000-${1000 + i}`,
-  message: `This is a sample message from John Doe ${
-    i + 1
-  }. It's a placeholder for the actual message content.`,
-}));
+type Response = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  message: string;
+};
 
 export default function FormResponseList() {
-  const [responses, setResponses] = useState(initialResponses);
+  const [responses, setResponses] = useState([] as Response[]);
   const [search, setSearch] = useState('');
+  const [isLoading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 2;
   const { toast } = useToast();
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await fetch('/api/message');
+        if (!response.ok) {
+          throw new Error('Failed to fetch data');
+        }
+        const data = await response.json();
+        setResponses(data);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        toast({
+          title: 'Error',
+          description: 'Failed to fetch data',
+          variant: 'destructive',
+        });
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, [toast]);
 
   const filteredResponses = responses.filter(
     (response) =>
@@ -61,21 +86,54 @@ export default function FormResponseList() {
     currentPage * itemsPerPage,
   );
 
-  const handleDeleteAll = () => {
-    setResponses([]);
-    setCurrentPage(1);
-    toast({
-      title: 'All responses deleted',
-      description: 'Your response list has been cleared.',
-    });
+  const handleDeleteAll = async () => {
+    try {
+      const response = await fetch('/api/message', {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete all responses');
+      }
+      setResponses([]);
+      setCurrentPage(1);
+      toast({
+        title: 'All responses deleted',
+        description: 'Your response list has been cleared.',
+      });
+    } catch (error) {
+      console.error('Error deleting all responses:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to delete all responses',
+        variant: 'destructive',
+      });
+    }
   };
 
-  const handleDelete = (id: string) => {
-    setResponses(responses.filter((response) => response.id !== id));
-    toast({
-      title: 'Response deleted',
-      description: 'The selected response has been removed.',
-    });
+  const handleDelete = async (id: string) => {
+    try {
+      const response = await fetch(`/api/message/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete response');
+      }
+
+      setResponses(responses.filter((response) => response.id !== id));
+      toast({
+        title: 'Response deleted',
+        description: 'The selected response has been removed.',
+      });
+    } catch (error) {
+      console.error('Error deleting response:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to delete response',
+        variant: 'destructive',
+      });
+    }
   };
 
   const handleCopy = (response: (typeof responses)[0]) => {
@@ -131,6 +189,20 @@ Message: ${response.message}
         });
       });
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+        >
+          <Loader2 className="h-12 w-12 " />
+        </motion.div>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full max-w-4xl space-y-6">
       <Card className="p-6">
@@ -229,7 +301,7 @@ Message: ${response.message}
           </motion.div>
         ))}
       </div>
-      <Card className='p-6'>
+      <Card className="p-6">
         {responses.length > 0 ? (
           <div className="flex justify-between items-center ">
             <Button

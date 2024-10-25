@@ -3,9 +3,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Button } from '@/components/ui/button';
+
 import {
   Phone,
   Mail,
@@ -15,10 +13,10 @@ import {
   Instagram,
   LinkedinIcon,
   Clock,
-  Send,
 } from 'lucide-react';
 import Container from '../LocalUi/container/Container';
 import FAQSection from './FAQ';
+import ContactUsForm from './ContactUsForm';
 
 const ContactInfo = ({
   icon: Icon,
@@ -80,10 +78,7 @@ const fadeInUp = {
 };
 
 export default function ContactUS() {
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    // Add your form submission logic here
-  };
+  
 
   return (
     <>
@@ -118,48 +113,7 @@ export default function ContactUS() {
               >
                 <Card className="p-6">
                   <CardContent className="p-0">
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium">
-                            First Name
-                          </label>
-                          <Input placeholder="John" required />
-                        </div>
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium">
-                            Last Name
-                          </label>
-                          <Input placeholder="Doe" required />
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium">Email</label>
-                        <Input
-                          type="email"
-                          placeholder="john@example.com"
-                          required
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium">
-                          Phone Number
-                        </label>
-                        <Input type="tel" placeholder="+1 (555) 000-0000" />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium">Message</label>
-                        <Textarea
-                          placeholder="How can we help you?"
-                          className="min-h-[150px]"
-                          required
-                        />
-                      </div>
-                      <Button type="submit" className="w-full">
-                        Send Message
-                        <Send className="ml-2 h-4 w-4" />
-                      </Button>
-                    </form>
+                    <ContactUsForm />
                   </CardContent>
                 </Card>
               </motion.div>

@@ -64,3 +64,18 @@ model stats {
   fuelstation Int
   furnitureSold Int
 }
+
+model subscribers {
+  id    String @id @default(cuid())
+  email String
+}
+
+model messages {
+  id    String @id @default(cuid())
+  firstName String
+  lastName String
+  phone String
+  email String
+  message String
+  createdAt DateTime @default(now())
+}
