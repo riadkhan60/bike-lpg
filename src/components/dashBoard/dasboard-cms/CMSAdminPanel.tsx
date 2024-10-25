@@ -16,6 +16,8 @@ import CustomerReviewsSection from './Reviews/CustomerReviews';
 import GallerySection from './Galley/Galley';
 import EmailLists from './EmailLists/EmailLists';
 import FormResponseList from './FormResponseList/FormResponseList';
+import Company from './Company/Company';
+import TeamMembers from './TeamMembers/TeamMembers';
 
 export default function CMSAdminPanel() {
   return (
@@ -61,6 +63,7 @@ function Panel() {
           <TabsList>
             {[
               'dashboard',
+              'Company',
               'FAQ',
               'videos',
               'products',
@@ -70,6 +73,8 @@ function Panel() {
               'Stats',
               'Emails',
               'Form Responses',
+              "Team Members",
+              
             ].map((tab) => (
               <TabsTrigger key={tab} value={tab}>
                 {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -105,6 +110,12 @@ function Panel() {
           </TabsContent>
           <TabsContent value="Form Responses">
             <FormResponseList />
+          </TabsContent>
+          <TabsContent value="Company">
+            <Company />
+          </TabsContent>
+          <TabsContent value="Team Members">
+            <TeamMembers />
           </TabsContent>
         </Tabs>
       </main>

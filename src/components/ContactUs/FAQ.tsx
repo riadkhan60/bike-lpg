@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Accordion,
@@ -14,6 +14,12 @@ import { Button } from '@/components/ui/button';
 import { Search, MessageCircle } from 'lucide-react';
 import Container from '../LocalUi/container/Container';
 
+type FAQ = {
+  question: string;
+  answer: string;
+};
+
+
 const FAQItem = ({
   question,
   answer,
@@ -22,62 +28,54 @@ const FAQItem = ({
   answer: string;
 }) => (
   <AccordionItem value={question}>
-    <AccordionTrigger className='text-left'>{question}</AccordionTrigger>
+    <AccordionTrigger className="text-left">{question}</AccordionTrigger>
     <AccordionContent>{answer}</AccordionContent>
   </AccordionItem>
 );
 
 export default function FAQSection() {
   const [searchTerm, setSearchTerm] = useState('');
+  const [faqs, setFaqs] = useState([] as FAQ[]);
+  // Sample FAQ data - in real implementation, this would come from your database
+  useEffect(() => { 
+    async function fetchFaqs() {
+      try {
+        const response = await fetch('/api/cms');
+        const data = await response.json();
+        setFaqs(data.qas);
+      } catch (error) {
+        console.error('Error fetching FAQs:', error);
+      }
+    }
 
-  const faqs = [
-    {
-      question: 'What is LPG conversion for bikes?',
-      answer:
-        'LPG conversion for bikes is a process where we modify your motorcycle to run on Liquefied Petroleum Gas (LPG) in addition to petrol. This conversion can lead to reduced fuel costs and lower emissions, making your bike more eco-friendly.',
-    },
-    {
-      question: 'How long does the LPG conversion process take?',
-      answer:
-        'The LPG conversion process typically takes about 4-6 hours, depending on the make and model of your bike. We strive to complete the conversion as quickly as possible while ensuring the highest quality and safety standards.',
-    },
-    {
-      question: 'Is LPG conversion safe for my bike?',
-      answer:
-        'Yes, LPG conversion is safe when done by certified professionals like our team at MS Jannat Traders. We use high-quality components and follow strict safety protocols to ensure that your bike operates safely with the LPG system.',
-    },
-    {
-      question: 'What types of furniture do you offer?',
-      answer:
-        'We offer a wide range of furniture including living room sets, bedroom furniture, dining sets, office furniture, and custom-made pieces. Our designs range from modern to traditional, catering to various tastes and preferences.',
-    },
-    {
-      question: 'Do you offer installation services for your furniture?',
-      answer:
-        'Yes, we provide professional installation services for all our furniture. Our skilled team ensures that your furniture is set up correctly and safely in your space.',
-    },
-    {
-      question: 'What are the benefits of using your fuel stations?',
-      answer:
-        'Our fuel stations offer high-quality fuel at competitive prices. We also provide loyalty programs, convenient locations, and clean, well-maintained facilities to enhance your refueling experience.',
-    },
-  ];
+    fetchFaqs();
+  })
 
-  const filteredFaqs = faqs.filter(
-    (faq) =>
-      faq.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      faq.answer.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
+
+  // Function to get FAQs to display based on search term
+  const getDisplayedFaqs = () => {
+    if (searchTerm) {
+      // If there's a search term, filter all FAQs
+      return faqs.filter(
+        (faq) =>
+          faq.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          faq.answer.toLowerCase().includes(searchTerm.toLowerCase()),
+      );
+    }
+    // If no search term, return only first 6 FAQs
+    return faqs.slice(0, 6);
+  };
+
+  const displayedFaqs = getDisplayedFaqs();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    // The filtering is already done in real-time, so we don't need to do anything here
   };
 
   return (
     <section className="py-16 bg-white">
       <Container>
-        <div className="container mx-auto ">
+        <div className="container mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -89,6 +87,12 @@ export default function FAQSection() {
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               Find answers to common questions about our products and services.
+              {!searchTerm && faqs.length > 6 && (
+                <span className="block mt-2 text-sm text-gray-500">
+                  Showing top {Math.min(6, faqs.length)} FAQs. Use search to
+                  find more answers.
+                </span>
+              )}
             </p>
           </motion.div>
 
@@ -102,7 +106,7 @@ export default function FAQSection() {
               <CardHeader>
                 <CardTitle className="flex items-center justify-center">
                   <Search className="w-6 h-6 mr-2 text-primary" />
-                  Search FAQs
+                  Search All FAQs
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -125,10 +129,10 @@ export default function FAQSection() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.4 }}
           >
-            <AnimatePresence>
-              {filteredFaqs.length > 0 ? (
+            <AnimatePresence mode="wait">
+              {displayedFaqs.length > 0 ? (
                 <Accordion type="single" collapsible className="w-full">
-                  {filteredFaqs.map((faq, index) => (
+                  {displayedFaqs.map((faq, index) => (
                     <motion.div
                       key={index}
                       initial={{ opacity: 0, y: 20 }}
@@ -141,15 +145,24 @@ export default function FAQSection() {
                   ))}
                 </Accordion>
               ) : (
-                <motion.p
+                <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   className="text-center text-gray-600 mt-8"
                 >
-                  No matching questions found. Please try a different search
-                  term.
-                </motion.p>
+                  <p>
+                    No matching questions found. Please try a different search
+                    term.
+                  </p>
+                  <Button
+                    variant="ghost"
+                    className="mt-4"
+                    onClick={() => setSearchTerm('')}
+                  >
+                    Show all FAQs
+                  </Button>
+                </motion.div>
               )}
             </AnimatePresence>
           </motion.div>

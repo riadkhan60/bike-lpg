@@ -11,6 +11,8 @@ import {
   ImageUpIcon,
   Mails,
   Book,
+  Building,
+  UsersRound,
 } from 'lucide-react';
 import { SquareArrowLeft } from 'lucide-react';
 import Link from 'next/link';
@@ -24,6 +26,7 @@ export default function Sidebar({
 }) {
   const sidebarItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { id: 'Company', label: 'Company', icon: Building },
     { id: 'FAQ', label: 'FAQ', icon: FileQuestion },
     { id: 'videos', label: 'Videos', icon: Video },
     { id: 'products', label: 'Products', icon: Package },
@@ -33,6 +36,7 @@ export default function Sidebar({
     { id: 'Stats', label: 'Stats', icon: ChartColumnBig },
     { id: 'Emails', label: 'Emails', icon: Mails },
     { id: 'Form Responses', label: 'Responses', icon: Book },
+    { id: 'Team Members', label: 'Team', icon: UsersRound },
   ];
 
   return (
