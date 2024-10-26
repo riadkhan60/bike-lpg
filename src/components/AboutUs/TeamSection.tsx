@@ -78,7 +78,7 @@ const MobileCarousel = ({ members }: { members: TeamMemberData[] }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   return (
-    <div className="relative w-full px-4">
+    <div className="relative overflow-hidden w-full px-4">
       <AnimatePresence mode="wait">
         <motion.div
           key={currentIndex}
