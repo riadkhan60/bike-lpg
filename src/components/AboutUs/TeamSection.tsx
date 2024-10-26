@@ -217,7 +217,7 @@ const TeamSection = () => {
   useEffect(() => {
     const fetchTeamMembers = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/team-members');
+        const response = await fetch('/api/team-members');
         const data = await response.json();
         // Add artificial delay to ensure smooth transition
         await new Promise((resolve) => setTimeout(resolve, 300));
