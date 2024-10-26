@@ -65,11 +65,11 @@ export const BIKE_LPG_MENU = [
   {
     id: 4,
     name: 'About us',
-    path: '/site/bike-lpg',
+    path: '/site/about-us',
   },
   {
     id: 4,
     name: 'Contact us',
-    path: '/site/bike-lpg',
+    path: '/site/contact-us',
   },
 ]
