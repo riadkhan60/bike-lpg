@@ -1,10 +1,23 @@
 'use client';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 import { useInView } from 'framer-motion';
 import Container from '@/components/LocalUi/container/Container';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Building2, Users, Globe, Leaf } from 'lucide-react';
+
+type Stats = {
+  id: string;
+  employees: number;
+  dealers: number;
+  clientsServed: number;
+  solutions: number;
+  satiesfiedClients: number;
+  lpgConversion: number;
+  fuelstation: number;
+  furnitureSold: number;
+};
 
 const AnimatedCard = ({
   children,
@@ -46,6 +59,24 @@ export default function CompanyOverview() {
   const headerControls = useAnimation();
   const headerRef = useRef(null);
   const headerInView = useInView(headerRef, { once: true });
+  const [stats, setStats] = useState<Stats | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function getStats() {
+      try {
+        const response = await fetch('/api/stats');
+        const data = await response.json();
+        setStats(data);
+      } catch (error) {
+        console.error('Error fetching stats:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    getStats();
+  }, []);
 
   useEffect(() => {
     if (headerInView) {
@@ -62,10 +93,37 @@ export default function CompanyOverview() {
     },
   };
 
+  const statsConfig = [
+    {
+      title: 'Employees',
+      value: stats?.employees ?? 1000,
+      description: 'Across the country',
+      icon: Users,
+    },
+    {
+      title: 'Dealers',
+      value: stats?.dealers ?? 50,
+      description: 'Across the country',
+      icon: Building2,
+    },
+    {
+      title: 'Clients Served',
+      value: stats?.clientsServed ?? 1000,
+      description: 'From Teknaf to Tetulia',
+      icon: Globe,
+    },
+    {
+      title: 'Solutions',
+      value: stats?.solutions ?? 20,
+      description: 'for a sustainable future',
+      icon: Leaf,
+    },
+  ];
+
   return (
     <Container>
-      <section className="bg-background py-12 ">
-        <div className=" mx-auto">
+      <section className="bg-background py-12">
+        <div className="mx-auto">
           <motion.div
             className="text-center mb-12"
             ref={headerRef}
@@ -84,32 +142,7 @@ export default function CompanyOverview() {
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              {
-                title: 'Employees',
-                value: '500+',
-                description: 'Across the country',
-                icon: Users,
-              },
-              {
-                title: 'Dealers',
-                value: '50+',
-                description: 'Across the country',
-                icon: Building2,
-              },
-              {
-                title: 'Clients Served',
-                value: '1000+',
-                description: 'From Teknaf to Tetulia',
-                icon: Globe,
-              },
-              {
-                title: 'Solutions',
-                value: '20+',
-                description: 'for a sustainable future',
-                icon: Leaf,
-              },
-            ].map((item, index) => (
+            {statsConfig.map((item, index) => (
               <AnimatedCard key={item.title} index={index}>
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -119,10 +152,19 @@ export default function CompanyOverview() {
                     <item.icon className="h-4 w-4 text-muted-foreground" />
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">{item.value}</div>
-                    <p className="text-xs text-muted-foreground">
-                      {item.description}
-                    </p>
+                    {loading ? (
+                      <>
+                        <Skeleton className="h-8 w-24 mb-2" />
+                        <Skeleton className="h-4 w-32" />
+                      </>
+                    ) : (
+                      <>
+                        <div className="text-2xl font-bold">{item.value}+</div>
+                        <p className="text-xs text-muted-foreground">
+                          {item.description}
+                        </p>
+                      </>
+                    )}
                   </CardContent>
                 </Card>
               </AnimatedCard>

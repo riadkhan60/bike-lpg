@@ -1,12 +1,14 @@
 'use client';
 
-import React from 'react';
+
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Clock, Target, Users, Shield } from 'lucide-react';
+import { ArrowRight, Clock,  } from 'lucide-react';
 import Container from '../LocalUi/container/Container';
+import { timeline, values } from '@/constants/AboutConstant';
+import TeamSection from './TeamSection';
 
 // Smoother animation configs
 const fadeInUp = {
@@ -26,34 +28,6 @@ const containerVariants = {
   },
 };
 
-const TeamMember = ({
-  name,
-  role,
-  image,
-}: {
-  name: string;
-  role: string;
-  image: string;
-}) => (
-  <motion.div
-    whileHover={{ scale: 1.02 }}
-    transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-    className="text-center p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow"
-  >
-    <div className="relative w-[200px] h-[200px] mx-auto mb-4">
-      <Image
-        src={image}
-        alt={name}
-        fill
-        className="rounded-full object-cover border-4 border-primary/10"
-        sizes="200px"
-        priority
-      />
-    </div>
-    <h3 className="text-xl font-semibold mb-1">{name}</h3>
-    <p className="text-muted-foreground">{role}</p>
-  </motion.div>
-);
 
 const TimelineItem = ({ year, event }: { year: string; event: string }) => (
   <motion.div
@@ -101,59 +75,6 @@ const ValueCard = ({
 );
 
 export default function AboutUsPage() {
-  const teamMembers = [
-    {
-      name: 'Mr. Jannat',
-      role: 'Founder & CEO',
-      image: '/placeholder.svg?height=200&width=200',
-    },
-    {
-      name: 'Sarah Johnson',
-      role: 'COO',
-      image: '/placeholder.svg?height=200&width=200',
-    },
-    {
-      name: 'Michael Chen',
-      role: 'CTO',
-      image: '/placeholder.svg?height=200&width=200',
-    },
-    {
-      name: 'Aisha Patel',
-      role: 'Head of Design',
-      image: '/placeholder.svg?height=200&width=200',
-    },
-  ];
-
-  const timeline = [
-    { year: '2000', event: 'MS Jannat Traders founded' },
-    { year: '2005', event: 'Launched our first LPG conversion kit' },
-    { year: '2010', event: 'Opened our 10th fuel station' },
-    { year: '2015', event: 'Expanded into furniture and interior design' },
-    { year: '2020', event: 'Reached 100,000 satisfied customers' },
-    { year: '2024', event: 'Celebrating 25 years of innovation and growth' },
-  ];
-
-  const values = [
-    {
-      icon: Target,
-      title: 'Innovation',
-      description:
-        'Constantly pushing boundaries to provide cutting-edge solutions that transform industries and improve lives.',
-    },
-    {
-      icon: Users,
-      title: 'Customer Focus',
-      description:
-        'Putting our customers at the heart of everything we do, ensuring their success is our primary mission.',
-    },
-    {
-      icon: Shield,
-      title: 'Sustainability',
-      description:
-        'Committed to eco-friendly practices and products that protect our environment for future generations.',
-    },
-  ];
-
   return (
     <div className="min-h-screen bg-background">
       <Container>
@@ -188,7 +109,7 @@ export default function AboutUsPage() {
               </h2>
               <div className="space-y-4 text-muted-foreground leading-relaxed">
                 <p>
-                  Founded in 2000, MS Jannat Traders has grown from a small
+                  Founded in 2022, MS Jannat Traders has grown from a small
                   local business to a diversified company with multiple
                   successful ventures. Our journey has been marked by
                   innovation, customer-centric approaches, and a commitment to
@@ -262,21 +183,7 @@ export default function AboutUsPage() {
           </motion.div>
 
           {/* Team Section */}
-          <motion.div
-            variants={containerVariants}
-            initial="initial"
-            animate="animate"
-            className="space-y-12"
-          >
-            <h2 className="text-3xl max-md:text-2xl font-bold text-center text-primary">
-              Meet Our Team
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {teamMembers.map((member, index) => (
-                <TeamMember key={index} {...member} />
-              ))}
-            </div>
-          </motion.div>
+          <TeamSection/>
 
           {/* CTA Section */}
           <motion.div
@@ -291,12 +198,15 @@ export default function AboutUsPage() {
             <p className="text-xl text-muted-foreground">
               Be a part of our mission to create a sustainable future.
             </p>
+
             <Button
               size="lg"
               className="bg-primary text-primary-foreground hover:bg-primary/90"
             >
-              Explore Opportunities
-              <ArrowRight className="ml-2 h-5 w-5" />
+              <a className='flex items-center' href="https://www.facebook.com/@bikelpg0" target="_blank">
+                Explore Opportunities
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </a>
             </Button>
           </motion.div>
         </main>

@@ -1,18 +1,55 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
-import { Facebook, Instagram, Linkedin, Twitter } from 'lucide-react';
+
+import {
+  IconBrandFacebook as Facebook,
+  IconBrandWhatsapp as Whatsapp,
+  IconBrandTiktok as Tiktok,
+  IconBrandYoutube as Youtube,
+} from '@tabler/icons-react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import Container from '../LocalUi/container/Container';
 import FooterSubscriberInput from './FooterSubscriberInput';
 
+interface ContactData {
+  id?: string;
+  companyId: string;
+  phone?: string;
+  email?: string;
+  location?: string;
+  facebook?: string;
+  whatsapp?: string;
+  tiktok?: string;
+  youtube?: string;
+  instagram?: string;
+  linkedin?: string;
+}
+
 export default function FooterElements({
   authButton,
 }: {
   authButton: React.ReactNode;
-}) {
+  }) {
+  const [contacts, setContacts] = useState({} as ContactData);
+  
+   useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await fetch('/api/contacts');
+        const data = await response.json();
+        setContacts(data[0]);
+        
+      } catch (error) {
+        console.error('Failed to fetch data:', error);
+      }
+    }
+
+    fetchData();
+  },[])
+
   const currentYear = new Date().getFullYear();
 
   const containerVariants = {
@@ -118,19 +155,21 @@ export default function FooterElements({
             </p>
             <div className="flex space-x-4">
               {[
-                { icon: <Facebook className="h-5 w-5" />, label: 'Facebook' },
-                { icon: <Twitter className="h-5 w-5" />, label: 'Twitter' },
-                { icon: <Instagram className="h-5 w-5" />, label: 'Instagram' },
-                { icon: <Linkedin className="h-5 w-5" />, label: 'LinkedIn' },
+                { icon: <Facebook className="h-5 w-5" />, href:contacts.facebook, label: 'Facebook' },
+                { icon: <Youtube className="h-5 w-5" />, href:contacts.youtube, label: 'Twitter' },
+                { icon: <Tiktok className="h-5 w-5" />, href:contacts.tiktok, label: 'Instagram' },
+                { icon:<Whatsapp  className="h-5 w-5" />, href:contacts.whatsapp, label: 'LinkedIn' },
               ].map((social) => (
-                <Link
+
+                <a
                   key={social.label}
-                  href="#"
+                  target='_blank'
+                  href={social?.href?.toString() || '#'}
                   className="text-gray-600 hover:text-primary transition-colors"
                   aria-label={social.label}
                 >
                   {social.icon}
-                </Link>
+                </a>
               ))}
             </div>
           </motion.div>

@@ -21,7 +21,7 @@ import Container from '@/components/LocalUi/container/Container';
        'Providing fuel solutions with our filling station for convenient access.',
      icon: Fuel, // Update with an appropriate icon
      color: 'text-blue-500',
-     link: '/jannat-petroleum',
+     link: '/site/jannat-petroleum',
      images: '/filling.jpg', // Update with an appropriate image path
    },
    {
@@ -39,7 +39,7 @@ import Container from '@/components/LocalUi/container/Container';
        'Expert interior design and furniture solutions for every space.',
      icon: Home, // Update with an appropriate icon
      color: 'text-green-500',
-     link: '/sr-design-house',
+     link: '/site/sr-design-house',
      images: '/fur.jpg', // Update with an appropriate image path
    },
  ];

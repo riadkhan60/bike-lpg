@@ -1,19 +1,33 @@
 'use client';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import { MapPin, Clock, Phone } from 'lucide-react';
 import Container from '../LocalUi/container/Container';
+import { Skeleton } from '../ui/skeleton';
 
+interface ContactData {
+  id?: string;
+  companyId: string;
+  phone?: string;
+  email?: string;
+  location?: string;
+  facebook?: string;
+  whatsapp?: string;
+  tiktok?: string;
+  youtube?: string;
+  instagram?: string;
+  linkedin?: string;
+}
 const InfoCard = ({
   icon: Icon,
   title,
   content,
 }: {
   icon: React.ElementType;
-  title: string;
-  content: string;
+  title?: string;
+  content?: string;
 }) => (
   <Card className="border-none shadow-sm">
     <CardContent className="flex items-center space-x-4 p-4">
@@ -22,13 +36,33 @@ const InfoCard = ({
       </div>
       <div>
         <h3 className="font-semibold text-sm">{title}</h3>
-        <p className="text-muted-foreground">{content}</p>
+        {content ? (
+          <p className="text-muted-foreground">{content}</p>
+        ) : (
+          <Skeleton className="h-4 w-[100px]"></Skeleton>
+        )}
       </div>
     </CardContent>
   </Card>
 );
 
 export default function FillingStation() {
+  const [contacts, setContacts] = useState({} as ContactData);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await fetch('/api/contacts');
+        const data = await response.json();
+        setContacts(data[2]);
+      } catch (error) {
+        console.error('Failed to fetch data:', error);
+      }
+    }
+
+    fetchData();
+  }, []);
+
   return (
     <div className="min-h-screen bg-background">
       <Container>
@@ -75,10 +109,10 @@ export default function FillingStation() {
                   About Our Station
                 </h2>
                 <p className="text-muted-foreground leading-relaxed">
-                  Located in the heart of Chittagong, our modern filling station
-                  provides high-quality fuel services with state-of-the-art
-                  equipment and professional staff. We take pride in maintaining
-                  the highest standards of safety and customer service.
+                  Our filling station provides high-quality fuel services with
+                  state-of-the-art equipment and professional staff. We take
+                  pride in maintaining the highest standards of safety and
+                  customer service.
                 </p>
               </div>
 
@@ -86,7 +120,7 @@ export default function FillingStation() {
                 <InfoCard
                   icon={MapPin}
                   title="Location"
-                  content="123 Station Road, Agrabad, Chittagong"
+                  content={contacts?.location}
                 />
                 <InfoCard
                   icon={Clock}
@@ -96,7 +130,7 @@ export default function FillingStation() {
                 <InfoCard
                   icon={Phone}
                   title="Contact"
-                  content="+880 1234-567890"
+                  content={contacts?.phone}
                 />
               </div>
             </motion.div>
@@ -111,16 +145,14 @@ export default function FillingStation() {
           >
             <h3 className="text-xl font-semibold mb-4">Available Services</h3>
             <div className="flex flex-wrap justify-center gap-4">
-              {['Petrol', 'Diesel', 'CNG', 'Electric Charging', 'Car Wash'].map(
-                (service) => (
-                  <span
-                    key={service}
-                    className="bg-white px-4 py-2 rounded-full text-sm shadow-sm"
-                  >
-                    {service}
-                  </span>
-                ),
-              )}
+              {['Petrol', 'Diesel', 'CNG', 'Car Wash'].map((service) => (
+                <span
+                  key={service}
+                  className="bg-white px-4 py-2 rounded-full text-sm shadow-sm"
+                >
+                  {service}
+                </span>
+              ))}
             </div>
           </motion.div>
         </main>

@@ -1,35 +1,74 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
-
+import { Phone, Mail, MapPin, Clock } from 'lucide-react';
 import {
-  Phone,
-  Mail,
-  MapPin,
-  Facebook,
-  Twitter,
-  Instagram,
-  LinkedinIcon,
-  Clock,
-} from 'lucide-react';
+  IconBrandFacebook as Facebook,
+  IconBrandWhatsapp as Whatsapp,
+  IconBrandTiktok as Tiktok,
+  IconBrandInstagram as Instagram,
+  IconBrandLinkedin as Linkedin,
+  IconBrandYoutube as Youtube,
+} from '@tabler/icons-react';
 import Container from '../LocalUi/container/Container';
 import FAQSection from './FAQ';
 import ContactUsForm from './ContactUsForm';
 
-const ContactInfo = ({
-  icon: Icon,
-  title,
-  content,
-  link = '',
-  className = '',
-}: {
+// Type definitions
+interface ContactData {
+  companyId?: string;
+  location?: string;
+  email?: string;
+  phone?: string;
+  facebook?: string;
+  whatsapp?: string;
+  instagram?: string;
+  linkedin?: string;
+  tiktok?: string;
+  youtube?: string;
+}
+
+interface ContactInfoProps {
   icon: React.ElementType;
   title: string;
   content: string;
   link?: string;
   className?: string;
+}
+
+interface SocialLinkProps {
+  icon: React.ElementType;
+  href: string;
+  label: string;
+}
+
+// Skeleton components
+const SkeletonContactInfo = () => (
+  <div className="flex items-center space-x-4">
+    <div className="bg-primary/5 p-3 rounded-full animate-pulse">
+      <div className="w-6 h-6" />
+    </div>
+    <div className="space-y-2">
+      <div className="h-5 w-24 bg-primary/5 rounded animate-pulse" />
+      <div className="h-4 w-32 bg-primary/5 rounded animate-pulse" />
+    </div>
+  </div>
+);
+
+const SkeletonSocialLink = () => (
+  <div className="bg-primary/5 p-4 rounded-full animate-pulse">
+    <div className="w-6 h-6" />
+  </div>
+);
+
+const ContactInfo: React.FC<ContactInfoProps> = ({
+  icon: Icon,
+  title,
+  content,
+  link = '',
+  className = '',
 }) => (
   <motion.div whileHover={{ y: -2 }} className="flex items-center space-x-4">
     <div className="bg-primary/10 p-3 rounded-full">
@@ -51,25 +90,20 @@ const ContactInfo = ({
   </motion.div>
 );
 
-const SocialLink = ({
-  icon: Icon,
-  href,
-  label,
-}: {
-  icon: React.ElementType;
-  href: string;
-  label: string;
-}) => (
-  <motion.a
-    href={href}
-    whileHover={{ scale: 1.1 }}
-    whileTap={{ scale: 0.9 }}
-    className="bg-primary/10 p-4 rounded-full hover:bg-primary hover:text-primary-foreground transition-colors"
-    aria-label={label}
-  >
-    <Icon className="w-6 h-6" />
-  </motion.a>
-);
+const SocialLink: React.FC<SocialLinkProps> = ({ icon: Icon, href, label }) =>
+  href && (
+    <motion.a
+      href={href}
+      whileHover={{ scale: 1.1 }}
+      whileTap={{ scale: 0.9 }}
+      className="bg-primary/10 p-4 rounded-full hover:bg-primary hover:text-primary-foreground transition-colors"
+      aria-label={label}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <Icon className="w-6 h-6" />
+    </motion.a>
+  );
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -77,14 +111,48 @@ const fadeInUp = {
   transition: { duration: 0.5 },
 };
 
-export default function ContactUS() {
-  
+const ContactUS: React.FC = () => {
+  const [data, setData] = React.useState<ContactData>({});
+  const [loading, setLoading] = React.useState<boolean>(true);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await fetch('/api/contacts');
+        const contactData: ContactData[] = await response.json();
+        const bikeLpg = contactData.find(
+          (company) => company.companyId === '1',
+        );
+        setData(bikeLpg || {});
+      } catch (error) {
+        console.error('Error fetching contact data:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
+
+  // Dummy data for development
+  const dummyData: ContactData = {
+    location: 'Loading...',
+    email: 'Loading...',
+    phone: 'Loading...',
+    facebook: '#',
+    whatsapp: '#',
+    instagram: '#',
+    linkedin: '#',
+    tiktok: '#',
+    youtube: '#',
+  };
+
+  const displayData = loading ? dummyData : data;
 
   return (
     <>
       <div className="min-h-screen bg-background">
         <Container>
-          <main className=" mx-auto py-16 space-y-24">
+          <main className="mx-auto py-16 space-y-24">
             {/* Hero Section */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -96,9 +164,9 @@ export default function ContactUS() {
                 Contact Us
               </h1>
               <p className="text-xl text-muted-foreground leading-relaxed">
-                {" We'd"} love to hear from you. Whether you have a question
-                about our services, pricing, or anything else, our team is ready
-                to answer all your questions.
+                {"We'd"} love to hear from you. Whether you have a question about
+                our services, pricing, or anything else, our team is ready to
+                answer all your questions.
               </p>
             </motion.div>
 
@@ -127,67 +195,119 @@ export default function ContactUS() {
               >
                 {/* Map */}
                 <Card className="overflow-hidden">
-                  <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m10!1m8!1m3!1d227.35795708366723!2d89.91902310374823!3d24.25131434176706!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sbd!4v1729610630047!5m2!1sen!2sbd"
-                    width="100%"
-                    height="300"
-                    className="border-0"
-                    allowFullScreen
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                  ></iframe>
+                  
+                    <iframe
+                      src="https://www.google.com/maps/embed?pb=!1m10!1m8!1m3!1d227.35795708366723!2d89.91902310374823!3d24.25131434176706!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sbd!4v1729610630047!5m2!1sen!2sbd"
+                      width="100%"
+                      height="300"
+                      className="border-0"
+                      allowFullScreen
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                    />
+             
                 </Card>
 
                 {/* Contact Details */}
                 <div className="space-y-6">
-                  <ContactInfo
-                    icon={MapPin}
-                    title="Visit Us"
-                    content="123 Business Avenue, Tech District, City, 12345"
-                  />
-                  <ContactInfo
-                    icon={Mail}
-                    title="Email Us"
-                    content="contact@msjannattraders.com"
-                    link="mailto:contact@msjannattraders.com"
-                  />
-                  <ContactInfo
-                    icon={Phone}
-                    title="Call Us"
-                    content="+1 (555) 123-4567"
-                    link="tel:+15551234567"
-                  />
-                  <ContactInfo
-                    icon={Clock}
-                    title="Business Hours"
-                    content="Monday - Friday: 9:00 AM - 6:00 PM"
-                  />
+                  {loading ? (
+                    <>
+                      <SkeletonContactInfo />
+                      <SkeletonContactInfo />
+                      <SkeletonContactInfo />
+                      <SkeletonContactInfo />
+                    </>
+                  ) : (
+                    <>
+                      {displayData.location && (
+                        <ContactInfo
+                          icon={MapPin}
+                          title="Visit Us"
+                          content={displayData.location}
+                        />
+                      )}
+                      {displayData.email && (
+                        <ContactInfo
+                          icon={Mail}
+                          title="Email Us"
+                          content={displayData.email}
+                          link={`mailto:${displayData.email}`}
+                        />
+                      )}
+                      {displayData.phone && (
+                        <ContactInfo
+                          icon={Phone}
+                          title="Call Us"
+                          content={displayData.phone}
+                          link={`tel:${displayData.phone}`}
+                        />
+                      )}
+                      <ContactInfo
+                        icon={Clock}
+                        title="Business Hours"
+                        content="Monday - Friday: 9:00 AM - 6:00 PM"
+                      />
+                    </>
+                  )}
                 </div>
 
                 {/* Social Media Links */}
                 <div className="space-y-4">
                   <h3 className="text-xl font-semibold">Connect With Us</h3>
-                  <div className="flex space-x-4">
-                    <SocialLink
-                      icon={Facebook}
-                      href="https://facebook.com"
-                      label="Facebook"
-                    />
-                    <SocialLink
-                      icon={Twitter}
-                      href="https://twitter.com"
-                      label="Twitter"
-                    />
-                    <SocialLink
-                      icon={Instagram}
-                      href="https://instagram.com"
-                      label="Instagram"
-                    />
-                    <SocialLink
-                      icon={LinkedinIcon}
-                      href="https://linkedin.com"
-                      label="LinkedIn"
-                    />
+                  <div className="grid grid-cols-4 w-fit gap-4">
+                    {loading ? (
+                      <>
+                        <SkeletonSocialLink />
+                        <SkeletonSocialLink />
+                        <SkeletonSocialLink />
+                        <SkeletonSocialLink />
+                      </>
+                    ) : (
+                      <>
+                        {displayData.facebook && (
+                          <SocialLink
+                            icon={Facebook}
+                            href={displayData.facebook}
+                            label="Facebook"
+                          />
+                        )}
+                        {displayData.whatsapp && (
+                          <SocialLink
+                            icon={Whatsapp}
+                            href={`whatsapp://send?phone=${displayData.whatsapp}`}
+                            label="Whatsapp"
+                          />
+                        )}
+                        {displayData.instagram && (
+                          <SocialLink
+                            icon={Instagram}
+                            href={displayData.instagram}
+                            label="Instagram"
+                          />
+                        )}
+                        {displayData.linkedin && (
+                          <SocialLink
+                            icon={Linkedin}
+                            href={displayData.linkedin}
+                            label="LinkedIn"
+                          />
+                        )}
+                        {displayData.tiktok && (
+                          <SocialLink
+                            icon={Tiktok}
+                            href={displayData.tiktok}
+                            label="Tiktok"
+                          />
+                        )}
+                        {displayData.youtube && (
+                          <SocialLink
+                            icon={Youtube}
+                            href={displayData.youtube}
+                            label="Youtube"
+                          />
+                        )}
+                      </>
+                    )}
                   </div>
                 </div>
               </motion.div>
@@ -230,7 +350,9 @@ export default function ContactUS() {
           </main>
         </Container>
       </div>
-      <FAQSection />
+      <FAQSection number={displayData.phone ?? ''} />
     </>
   );
-}
+};
+
+export default ContactUS;

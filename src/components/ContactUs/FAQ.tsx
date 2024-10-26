@@ -33,7 +33,7 @@ const FAQItem = ({
   </AccordionItem>
 );
 
-export default function FAQSection() {
+export default function FAQSection({number}: {number: string | number | undefined}) {
   const [searchTerm, setSearchTerm] = useState('');
   const [faqs, setFaqs] = useState([] as FAQ[]);
   // Sample FAQ data - in real implementation, this would come from your database
@@ -49,7 +49,7 @@ export default function FAQSection() {
     }
 
     fetchFaqs();
-  })
+  },[])
 
 
   // Function to get FAQs to display based on search term
@@ -183,7 +183,11 @@ export default function FAQSection() {
                   Our team is here to help. Contact us for personalized
                   assistance.
                 </p>
-                <Button variant="secondary">Contact Support</Button>
+                <Button variant="secondary">
+                  <a href={`tel:${number}`}>
+                    Contact Support
+                  </a>
+                </Button>
               </CardContent>
             </Card>
           </motion.div>

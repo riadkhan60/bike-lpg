@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
+import Link from 'next/link';
 
 interface ImageSlide {
   type: 'image';
@@ -76,15 +77,19 @@ const initialSlides: Slide[] = [
                 size="lg"
                 className="bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 hover:scale-105"
               >
+                <Link href={'/bikeLpg'} className='flex items-center'>
                 Bike LPG
                 <ArrowRight className="ml-2 h-5 w-5" />
+                </Link>
               </Button>
               <Button
                 size="lg"
                 variant="outline"
                 className="bg-white text-gray-900 hover:bg-gray-100 transition-all duration-300 hover:scale-105"
               >
+                <Link href={'/site/contact-us'}>
                 Contact Us
+                </Link>
               </Button>
             </motion.div>
           </div>

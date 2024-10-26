@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -14,12 +14,25 @@ import {
   Leaf,
 } from 'lucide-react';
 import Container from '../LocalUi/container/Container';
+import Link from 'next/link';
 
 interface FeatureCardProps {
   icon: React.ReactNode;
   title: string;
   description: string;
 }
+
+type Stats = {
+  id: string;
+  employees: number;
+  dealers: number;
+  clientsServed: number;
+  solutions: number;
+  satiesfiedClients: number;
+  lpgConversion: number;
+  fuelstation: number;
+  furnitureSold: number;
+};
 
 const FeatureCard: React.FC<FeatureCardProps> = ({
   icon,
@@ -44,7 +57,33 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
   </motion.div>
 );
 
+const StatSkeleton = () => (
+  <div className="text-center animate-pulse">
+    <div className="h-10 w-24 bg-primary-foreground/20 mx-auto mb-2 rounded"></div>
+    <div className="h-6 w-32 bg-primary-foreground/20 mx-auto rounded"></div>
+  </div>
+);
+
 export default function WhyUs() {
+  const [stats, setStats] = useState<Stats | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function getStats() {
+      try {
+        const response = await fetch('/api/stats');
+        const data = await response.json();
+        setStats(data);
+      } catch (error) {
+        console.error('Error fetching stats:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    getStats();
+  }, []);
+
   const features = [
     {
       icon: <Zap className="w-6 h-6 text-yellow-500" />,
@@ -84,10 +123,29 @@ export default function WhyUs() {
     },
   ];
 
+  const statsData = [
+    {
+      number: loading ? <StatSkeleton /> : `${stats?.satiesfiedClients}+`,
+      label: 'Satisfied Customers',
+    },
+    {
+      number: loading ? <StatSkeleton /> : `${stats?.lpgConversion}+`,
+      label: 'LPG Conversions',
+    },
+    {
+      number: loading ? <StatSkeleton /> : `${stats?.fuelstation}`,
+      label: 'Fuel Stations',
+    },
+    {
+      number: loading ? <StatSkeleton /> : `${stats?.furnitureSold}+`,
+      label: 'Interiror Designed',
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
       <Container>
-        <main className=" mx-auto py-16">
+        <main className="mx-auto py-16">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -98,7 +156,7 @@ export default function WhyUs() {
               Why Choose MS Jannat Traders?
             </h1>
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-              Discover why we’re the preferred choice for doing business with
+              Discover why{" we're"} the preferred choice for doing business with
               us.
             </p>
           </motion.div>
@@ -134,13 +192,15 @@ export default function WhyUs() {
             <h2 className="text-3xl font-bold mb-8">
               Ready to Experience the Difference?
             </h2>
-            <Button
-              size="lg"
-              className="bg-primary text-primary-foreground hover:bg-primary/90"
-            >
-              Contact Us Today
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
+            <Link href={'/site/contact-us'}>
+              <Button
+                size="lg"
+                className="bg-primary text-primary-foreground hover:bg-primary/90"
+              >
+                Contact Us Today
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </Link>
           </motion.div>
         </main>
       </Container>
@@ -152,7 +212,7 @@ export default function WhyUs() {
         className="bg-primary text-primary-foreground py-16"
       >
         <Container>
-          <div className=" mx-auto ">
+          <div className="mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold mb-4">Our Impact in Numbers</h2>
               <p className="text-xl opacity-80">
@@ -160,12 +220,7 @@ export default function WhyUs() {
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {[
-                { number: '2K+', label: 'Satisfied Customers' },
-                { number: '500+', label: 'LPG Conversions' },
-                { number: '1', label: 'Fuel Stations' },
-                { number: '1000+', label: 'Furniture Pieces Sold' },
-              ].map((stat, index) => (
+              {statsData.map((stat, index) => (
                 <motion.div
                   key={index}
                   initial={{ scale: 0.5, opacity: 0 }}

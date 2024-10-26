@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
@@ -13,6 +13,21 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import Container from '../LocalUi/container/Container';
+import Link from 'next/link';
+
+interface ContactData {
+  id?: string;
+  companyId: string;
+  phone?: string;
+  email?: string;
+  location?: string;
+  facebook?: string;
+  whatsapp?: string;
+  tiktok?: string;
+  youtube?: string;
+  instagram?: string;
+  linkedin?: string;
+}
 
 const ServiceCard = ({
   icon: Icon,
@@ -64,7 +79,8 @@ const ProjectShowcase = ({
   </motion.div>
 );
 
-export default function FurnitureHouse() {
+export default function FurnitureHouse(  ) {
+  const [contacts, setContacts] = useState( {} as ContactData );
   const features = [
     'Custom Furniture Design',
     'Professional Interior Planning',
@@ -73,6 +89,22 @@ export default function FurnitureHouse() {
     '3D Visualization',
     'Project Management',
   ];
+
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await fetch('/api/contacts');
+        const data = await response.json();
+        setContacts(data[2]);
+        
+      } catch (error) {
+        console.error('Failed to fetch data:', error);
+      }
+    }
+
+    fetchData();
+  },[])
 
   return (
     <div className="min-h-screen bg-background">
@@ -94,11 +126,11 @@ export default function FurnitureHouse() {
             </p>
             <div className="flex max-md:flex-col justify-center gap-4">
               <Button size="lg" className="bg-primary text-primary-foreground">
-                View Portfolio
+                <a href={contacts?.facebook}>View Portfolio</a>
                 <ArrowRight className="ml-2 w-4 h-4" />
               </Button>
               <Button size="lg" variant="outline">
-                Book Consultation
+                <Link href={'/site/contact-us'}>Book Consultation</Link>
               </Button>
             </div>
           </motion.div>
@@ -194,11 +226,13 @@ export default function FurnitureHouse() {
             <div className="flex flex-col md:flex-row justify-center gap-8 items-center">
               <div className="flex items-center gap-2">
                 <Phone className="w-5 h-5 text-primary" />
-                <span>+880 1234-567890</span>
+                <span>{contacts?.phone }</span>
               </div>
               <Button className="bg-primary text-primary-foreground">
-                Schedule a Visit
-                <ArrowRight className="ml-2 w-4 h-4" />
+                <a className='flex' href={`tel:${contacts?.phone}`}>
+                  Schedule a Visit
+                  <ArrowRight className="ml-2 w-4 h-4" />
+                </a>
               </Button>
             </div>
           </motion.div>
