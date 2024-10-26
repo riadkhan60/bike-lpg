@@ -25,7 +25,7 @@ export const desktopMenuListLeft = [
   {
     id: 3,
     name: 'BikeLPG',
-    path: '/site/bike-lpg',
+    path: '/bike-lpg',
   },
 ];
 
@@ -44,5 +44,32 @@ export const desktopMenuListRight = [
     id: 3,
     name: 'Contact Us',
     path: '/site/contact-us'
+  },
+]
+export const BIKE_LPG_MENU = [
+  {
+    id: 1,
+    name: 'Ms Jannat Traders',
+    path: '/',
+  },
+  {
+    id: 2,
+    name: 'Our Products',
+    path: '/bike-lpg/our-products',
+  },
+  {
+    id: 3,
+    name: 'Why us',
+    path: '/site/our-services',
+  },
+  {
+    id: 4,
+    name: 'About us',
+    path: '/site/bike-lpg',
+  },
+  {
+    id: 4,
+    name: 'Contact us',
+    path: '/site/bike-lpg',
   },
 ]
