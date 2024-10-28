@@ -54,7 +54,8 @@ export default function FillingStation() {
       try {
         const response = await fetch('/api/contacts');
         const data = await response.json();
-        setContacts(data[2]);
+        
+        setContacts(data[1]);
       } catch (error) {
         console.error('Failed to fetch data:', error);
       }

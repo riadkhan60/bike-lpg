@@ -96,7 +96,7 @@ export default function FurnitureHouse(  ) {
       try {
         const response = await fetch('/api/contacts');
         const data = await response.json();
-        setContacts(data[2]);
+        setContacts(data[0]);
         
       } catch (error) {
         console.error('Failed to fetch data:', error);
