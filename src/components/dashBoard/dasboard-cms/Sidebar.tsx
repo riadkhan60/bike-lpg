@@ -62,14 +62,13 @@ export default function Sidebar({
           </Button>
         ))}
       </nav>
-      <div className='mt-auto'>
-        <Button
-          variant="secondary"
-          className={`w-full justify-start mb-2`}
-        >
-          <SquareArrowLeft className="mr-2 h-4 w-4" />
-          <Link href={'/'}>Go Home</Link>
-        </Button>
+      <div className="mt-auto">
+        <Link className="" href={'/'}>
+          <Button variant="secondary" className={`w-full justify-start mb-2`}>
+            <SquareArrowLeft className="mr-2 h-4 w-4" />
+            Go Home
+          </Button>
+        </Link>
       </div>
     </aside>
   );

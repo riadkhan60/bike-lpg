@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from 'react';
 
-
 import {
   IconBrandFacebook as Facebook,
   IconBrandWhatsapp as Whatsapp,
@@ -32,23 +31,22 @@ export default function FooterElements({
   authButton,
 }: {
   authButton: React.ReactNode;
-  }) {
+}) {
   const [contacts, setContacts] = useState({} as ContactData);
-  
-   useEffect(() => {
+
+  useEffect(() => {
     async function fetchData() {
       try {
         const response = await fetch('/api/contacts');
         const data = await response.json();
-        setContacts(data[0]);
-        
+        setContacts(data[2]);
       } catch (error) {
         console.error('Failed to fetch data:', error);
       }
     }
 
     fetchData();
-  },[])
+  }, []);
 
   const currentYear = new Date().getFullYear();
 
@@ -155,16 +153,31 @@ export default function FooterElements({
             </p>
             <div className="flex space-x-4">
               {[
-                { icon: <Facebook className="h-5 w-5" />, href:contacts.facebook, label: 'Facebook' },
-                { icon: <Youtube className="h-5 w-5" />, href:contacts.youtube, label: 'Twitter' },
-                { icon: <Tiktok className="h-5 w-5" />, href:contacts.tiktok, label: 'Instagram' },
-                { icon:<Whatsapp  className="h-5 w-5" />, href:contacts.whatsapp, label: 'LinkedIn' },
+                {
+                  icon: <Youtube className="h-5 w-5" />,
+                  href: contacts.youtube,
+                  label: 'Twitter',
+                },
+                {
+                  icon: <Facebook className="h-5 w-5" />,
+                  href: contacts.facebook,
+                  label: 'Facebook',
+                },
+                {
+                  icon: <Tiktok className="h-5 w-5" />,
+                  href: contacts.tiktok,
+                  label: 'Instagram',
+                },
+                {
+                  icon: <Whatsapp className="h-5 w-5" />,
+                  href: `https://wa.me/${contacts.whatsapp}?text=Hello%2C%20I%27m%20interested%20in%20your%20services%21`,
+                  label: 'LinkedIn',
+                },
               ].map((social) => (
-
                 <a
                   key={social.label}
-                  target='_blank'
-                  href={social?.href?.toString() || '#'}
+                  target="_blank"
+                  href={social.href}
                   className="text-gray-600 hover:text-primary transition-colors"
                   aria-label={social.label}
                 >

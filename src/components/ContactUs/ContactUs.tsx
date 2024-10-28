@@ -123,6 +123,7 @@ const ContactUS: React.FC = () => {
         const bikeLpg = contactData.find(
           (company) => company.companyId === '1',
         );
+        console.log(bikeLpg);
         setData(bikeLpg || {});
       } catch (error) {
         console.error('Error fetching contact data:', error);
@@ -164,9 +165,9 @@ const ContactUS: React.FC = () => {
                 Contact Us
               </h1>
               <p className="text-xl text-muted-foreground leading-relaxed">
-                {"We'd"} love to hear from you. Whether you have a question about
-                our services, pricing, or anything else, our team is ready to
-                answer all your questions.
+                {"We'd"} love to hear from you. Whether you have a question
+                about our services, pricing, or anything else, our team is ready
+                to answer all your questions.
               </p>
             </motion.div>
 
@@ -195,17 +196,15 @@ const ContactUS: React.FC = () => {
               >
                 {/* Map */}
                 <Card className="overflow-hidden">
-                  
-                    <iframe
-                      src="https://www.google.com/maps/embed?pb=!1m10!1m8!1m3!1d227.35795708366723!2d89.91902310374823!3d24.25131434176706!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sbd!4v1729610630047!5m2!1sen!2sbd"
-                      width="100%"
-                      height="300"
-                      className="border-0"
-                      allowFullScreen
-                      loading="lazy"
-                      referrerPolicy="no-referrer-when-downgrade"
-                    />
-             
+                  <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m10!1m8!1m3!1d227.35795708366723!2d89.91902310374823!3d24.25131434176706!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sbd!4v1729610630047!5m2!1sen!2sbd"
+                    width="100%"
+                    height="300"
+                    className="border-0"
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                  />
                 </Card>
 
                 {/* Contact Details */}
@@ -274,7 +273,7 @@ const ContactUS: React.FC = () => {
                         {displayData.whatsapp && (
                           <SocialLink
                             icon={Whatsapp}
-                            href={`whatsapp://send?phone=${displayData.whatsapp}`}
+                            href={`https://wa.me/${displayData.whatsapp}?text=Hello%2C%20I%27m%20interested%20in%20your%20services%21`}
                             label="Whatsapp"
                           />
                         )}
