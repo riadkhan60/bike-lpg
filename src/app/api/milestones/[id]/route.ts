@@ -1,23 +1,23 @@
 import {  NextResponse, NextRequest } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
-export async function GET(
-  { params }: { params: { id: string } },
-) {
-  try {
-    const milestone = await prisma.mileStones.findUnique({
-      where: {
-        id: parseInt(params.id),
-      },
-    });
-    return NextResponse.json(milestone);
-  } catch  {
-    return NextResponse.json(
-      { error: 'Error fetching milestone' },
-      { status: 500 },
-    );
-  }
-}
+// export async function GET(
+//   { params }: { params: { id: string } },
+// ) {
+//   try {
+//     const milestone = await prisma.mileStones.findUnique({
+//       where: {
+//         id: parseInt(params.id),
+//       },
+//     });
+//     return NextResponse.json(milestone);
+//   } catch  {
+//     return NextResponse.json(
+//       { error: 'Error fetching milestone' },
+//       { status: 500 },
+//     );
+//   }
+// }
 
 export async function PUT(
   request: Request,
