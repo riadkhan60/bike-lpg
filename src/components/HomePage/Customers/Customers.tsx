@@ -28,6 +28,7 @@ import { Star } from 'lucide-react';
 import Image from 'next/image';
 import { Skeleton } from '@/components/ui/skeleton';
 import Link from 'next/link';
+import { useSectionImages } from '@/sectionImageConext/sectionImageConext';
 
 interface Review {
   id: string;
@@ -42,6 +43,13 @@ export default function Customers() {
   const isInView = useInView(sectionRef, { once: true });
   const [testimonials, setTestimonials] = useState<Review[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const {
+    clientImageOne,
+    clientImageTwo,
+    clientImageThree,
+    clientImageFour,
+    isLoading: imageLoading,
+  } = useSectionImages();
 
   useEffect(() => {
     async function fetchTestimonials() {
@@ -129,22 +137,30 @@ export default function Customers() {
               transition={{ duration: 0.5, delay: 0.2 }}
             >
               <div className="translate-y-[30px]">
-                <Image
-                  alt="image"
-                  className="w-full rounded-xl"
-                  src={'/sat3.jpg'}
-                  width={300}
-                  height={300}
-                />
+                {imageLoading ? (
+                  <Skeleton className="w-full h-full rounded-xl" />
+                ) : (
+                  <Image
+                    alt="image"
+                    className="w-full rounded-xl"
+                    src={clientImageOne?.imageUrl ?? '/sat1.jpg'}
+                    width={300}
+                    height={300}
+                  />
+                )}
               </div>
               <div className="translate-y-[30px]">
-                <Image
-                  alt="image"
-                  className="w-full rounded-xl"
-                  src={'/sat4.jpg'}
-                  width={300}
-                  height={300}
-                />
+                {imageLoading ? (
+                  <Skeleton className="w-full h-full rounded-xl" />
+                ) : (
+                  <Image
+                    alt="image"
+                    className="w-full rounded-xl"
+                    src={clientImageTwo?.imageUrl ?? '/sat2.jpg'}
+                    width={300}
+                    height={300}
+                  />
+                )}
               </div>
             </motion.div>
 
@@ -155,22 +171,30 @@ export default function Customers() {
               transition={{ duration: 0.5, delay: 0.4 }}
             >
               <div>
-                <Image
-                  alt="image"
-                  className="w-full rounded-xl"
-                  src={'/sat1.jpg'}
-                  width={300}
-                  height={300}
-                />
+                {imageLoading ? (
+                  <Skeleton className="w-full h-full rounded-xl" />
+                ) : (
+                  <Image
+                    alt="image"
+                    className="w-full rounded-xl"
+                    src={clientImageThree?.imageUrl ?? '/sat3.jpg'}
+                    width={300}
+                    height={300}
+                  />
+                )}
               </div>
               <div>
-                <Image
-                  alt="image"
-                  className="w-full rounded-xl"
-                  src={'/sat3.jpg'}
-                  width={300}
-                  height={300}
-                />
+                {imageLoading ? (
+                  <Skeleton className="w-full h-full rounded-xl" />
+                ) : (
+                  <Image
+                    alt="image"
+                    className="w-full rounded-xl"
+                    src={clientImageFour?.imageUrl ?? '/sat3.jpg'}
+                    width={300}
+                    height={300}
+                  />
+                )}
               </div>
             </motion.div>
           </div>

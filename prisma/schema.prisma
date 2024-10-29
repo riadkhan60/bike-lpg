@@ -29,6 +29,7 @@ model Review {
 model VideoLink {
   id    String @id @default(cuid())
   title String
+  thumbnailUrl String
   url   String
   order Int
 }
@@ -124,4 +125,21 @@ model TeamMember {
   updatedAt DateTime @updatedAt
 
   @@map("team_members")
+}
+
+model mileStones {
+  id      Int      @id @default(autoincrement())
+  year   String
+  text   String
+}
+
+model Section {
+  id          String   @id @default(cuid())
+  sectionId   String   @unique // e.g., fillingStationSection
+  name        String
+  description String
+  imageUrl    String?
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

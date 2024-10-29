@@ -4,6 +4,7 @@ import ScrollGallery from './ScrollGalley';
 import MusicPlayer from '../MusicPlayer/MusicPlayer';
 import OurService from './OurService/OurService';
 import BikeLpgBanner from './BikeLpgSwipperBanner/BikeLpgBanner';
+import VideoShowcase from './VideosSection/VideosSection';
 
 export default function BikeLPG() {
   return (
@@ -11,6 +12,7 @@ export default function BikeLPG() {
       <BikeLpgBanner/>
       <BikeLPGProducts />
       <OurService />
+      <VideoShowcase />
       <ScrollGallery />
       <MusicPlayer />
     </div>

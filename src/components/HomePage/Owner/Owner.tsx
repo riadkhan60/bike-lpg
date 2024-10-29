@@ -7,9 +7,12 @@ import { motion } from 'framer-motion';
 import { useInView } from 'framer-motion';
 import { useRef } from 'react';
 import Container from '@/components/LocalUi/container/Container';
+import { useSectionImages } from '@/sectionImageConext/sectionImageConext';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function Owner() {
   const ref = useRef(null);
+  const { ownerImage, isLoading } = useSectionImages();
   const inView = useInView(ref, {
     once: true,
   });
@@ -59,13 +62,17 @@ export default function Owner() {
             <motion.div variants={itemVariants} className="relative group">
               <Card className="overflow-hidden shadow-2xl transition-shadow duration-300 group-hover:shadow-primary/50">
                 <CardContent className="p-0">
-                  <Image
-                    alt="Mr. Jannat - Owner of MS Jannat Traders"
-                    className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
-                    height="600"
-                    src="/owner.jpg"
-                    width="600"
-                  />
+                  {isLoading || !ownerImage ? (
+                    <Skeleton className="h-[600px] w-full" />
+                  ) : (
+                    <Image
+                      alt="Mr. Jannat - Owner of MS Jannat Traders"
+                      className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
+                      height="600"
+                      src={ownerImage?.imageUrl}
+                      width="600"
+                    />
+                  )}
                 </CardContent>
               </Card>
               <motion.div

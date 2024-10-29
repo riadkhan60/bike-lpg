@@ -2,7 +2,14 @@
 
 import { useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { Edit, Trash, MoveUp, MoveDown, Loader2, Video } from 'lucide-react';
+import {
+  Edit,
+  Trash,
+  MoveUp,
+  MoveDown,
+  Loader2,
+  Video,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -17,89 +24,172 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { useDashboardContext } from './DashboardContext/DasboardContext';
+import Image from 'next/image';
 
 interface VideoLink {
   id: string;
   title: string;
   url: string;
+  thumbnailUrl: string;
   order: number;
 }
 
 export default function VideosSection() {
-  const { videoLinks, setVideoLinks } = useDashboardContext();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [editingItem, setEditingItem] = useState<VideoLink | null>(null);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const { videoLinks, setVideoLinks } = useDashboardContext();
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [editingItem, setEditingItem] = useState<VideoLink | null>(null);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
+    const [thumbnailPreview, setThumbnailPreview] = useState<string>('');
+    const [editThumbnailFile, setEditThumbnailFile] = useState<File | null>(
+      null,
+    );
+    const [editThumbnailPreview, setEditThumbnailPreview] =
+    useState<string>('');
+  
+     const handleThumbnailChange = (
+       event: React.ChangeEvent<HTMLInputElement>,
+     ) => {
+       const file = event.target.files?.[0];
+       if (file) {
+         setThumbnailFile(file);
+         const previewUrl = URL.createObjectURL(file);
+         setThumbnailPreview(previewUrl);
+       }
+     };
 
-  const handleAddVideoLink = async (
-    event: React.FormEvent<HTMLFormElement>,
-  ) => {
-    event.preventDefault();
-    const form = event.currentTarget;
-    const title = (form.elements.namedItem('videoTitle') as HTMLInputElement)
-      .value;
-    const url = (form.elements.namedItem('videoUrl') as HTMLInputElement).value;
-    try {
-      setIsSubmitting(true);
-      const response = await fetch('/api/cms', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: 'videoLink', data: { title, url } }),
-      });
-      if (!response.ok) throw new Error('Failed to add video link');
-      const newVideoLink = await response.json();
-      setVideoLinks([...videoLinks, newVideoLink]);
-      form.reset();
-      toast({
-        title: 'Success',
-        description: 'Video link added successfully',
-      });
-    } catch {
-      toast({
-        title: 'Error',
-        description: 'Failed to add video link',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+     const handleEditThumbnailChange = (
+       event: React.ChangeEvent<HTMLInputElement>,
+     ) => {
+       const file = event.target.files?.[0];
+       if (file) {
+         setEditThumbnailFile(file);
+         const previewUrl = URL.createObjectURL(file);
+         setEditThumbnailPreview(previewUrl);
+       }
+     };
 
-  const handleEditVideoLink = async (videoLink: VideoLink) => {
-    try {
-      setIsSubmitting(true);
-      const response = await fetch('/api/cms', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          type: 'videoLink',
-          id: videoLink.id,
-          data: { title: videoLink.title, url: videoLink.url },
-        }),
-      });
-      if (!response.ok) throw new Error('Failed to update video link');
-      const updatedVideoLink = await response.json();
-      setVideoLinks(
-        videoLinks.map((link) =>
-          link.id === videoLink.id ? updatedVideoLink : link,
-        ),
-      );
-      setEditingItem(null);
-      setIsEditModalOpen(false);
-      toast({
-        title: 'Success',
-        description: 'Video link updated successfully',
-      });
-    } catch {
-      toast({
-        title: 'Error',
-        description: 'Failed to update video link',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+    const uploadThumbnail = async (file: File): Promise<string> => {
+      const formData = new FormData();
+      formData.append('image', file);
+
+      try {
+        const response = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to upload image');
+        }
+
+        const data = await response.json();
+        return data.url;
+      } catch (error) {
+        console.error('Error uploading image:', error);
+        throw error;
+      }
+    };
+
+     const handleAddVideoLink = async (
+       event: React.FormEvent<HTMLFormElement>,
+     ) => {
+       event.preventDefault();
+       const form = event.currentTarget;
+       const title = (form.elements.namedItem('videoTitle') as HTMLInputElement)
+         .value;
+       const url = (form.elements.namedItem('videoUrl') as HTMLInputElement)
+         .value;
+
+       try {
+         setIsSubmitting(true);
+         let thumbnailUrl = '';
+
+         if (thumbnailFile) {
+           thumbnailUrl = await uploadThumbnail(thumbnailFile);
+         }
+
+         const response = await fetch('/api/cms', {
+           method: 'POST',
+           headers: { 'Content-Type': 'application/json' },
+           body: JSON.stringify({
+             type: 'videoLink',
+             data: { title, url, thumbnailUrl },
+           }),
+         });
+
+         if (!response.ok) throw new Error('Failed to add video link');
+         const newVideoLink = await response.json();
+         setVideoLinks([...videoLinks, newVideoLink]);
+         form.reset();
+         setThumbnailFile(null);
+         setThumbnailPreview('');
+         toast({
+           title: 'Success',
+           description: 'Video link added successfully',
+         });
+       } catch (error) {
+         console.error(error);
+         toast({
+           title: 'Error',
+           description: 'Failed to add video link',
+           variant: 'destructive',
+         });
+       } finally {
+         setIsSubmitting(false);
+       }
+     };
+
+     const handleEditVideoLink = async (videoLink: VideoLink) => {
+       try {
+         setIsSubmitting(true);
+         let thumbnailUrl = videoLink.thumbnailUrl;
+
+         if (editThumbnailFile) {
+           thumbnailUrl = await uploadThumbnail(editThumbnailFile);
+         }
+
+         const response = await fetch('/api/cms', {
+           method: 'PUT',
+           headers: { 'Content-Type': 'application/json' },
+           body: JSON.stringify({
+             type: 'videoLink',
+             id: videoLink.id,
+             data: {
+               title: videoLink.title,
+               url: videoLink.url,
+               thumbnailUrl,
+             },
+           }),
+         });
+
+         if (!response.ok) throw new Error('Failed to update video link');
+         const updatedVideoLink = await response.json();
+         setVideoLinks(
+           videoLinks.map((link) =>
+             link.id === videoLink.id ? updatedVideoLink : link,
+           ),
+         );
+         setEditingItem(null);
+         setIsEditModalOpen(false);
+         setEditThumbnailFile(null);
+         setEditThumbnailPreview('');
+         toast({
+           title: 'Success',
+           description: 'Video link updated successfully',
+         });
+       } catch {
+         toast({
+           title: 'Error',
+           description: 'Failed to update video link',
+           variant: 'destructive',
+         });
+       } finally {
+         setIsSubmitting(false);
+       }
+     };
+
+  
 
   const handleDeleteVideoLink = async (id: string) => {
     try {
@@ -194,16 +284,20 @@ export default function VideosSection() {
   };
 
   return (
-    <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+    <motion.div
+      initial={{ opacity: 0, y: 50 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="space-y-6"
+    >
       <Card>
-        <CardHeader className="border-b rounded-t-xl  bg-white/50 backdrop-blur-sm">
-          <CardTitle className="flex items-center  gap-2">
+        <CardHeader className="border-b rounded-t-xl bg-white/50 backdrop-blur-sm">
+          <CardTitle className="flex items-center gap-2">
             <Video className="h-5 w-5" />
             Add New Video Link
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleAddVideoLink} className=" mt-6">
+          <form onSubmit={handleAddVideoLink} className="mt-6">
             <div className="grid w-full items-center gap-4">
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="videoTitle">Video Title</Label>
@@ -216,6 +310,28 @@ export default function VideosSection() {
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="videoUrl">Video URL</Label>
                 <Input id="videoUrl" placeholder="Enter video URL" required />
+              </div>
+              <div className="flex flex-col space-y-1.5">
+                <Label htmlFor="thumbnail">Thumbnail Image</Label>
+                <div className="flex flex-col gap-4">
+                  <Input
+                    id="thumbnail"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleThumbnailChange}
+                    className="cursor-pointer"
+                  />
+                  {thumbnailPreview && (
+                    <div className="relative w-48 h-32">
+                      <Image
+                        src={thumbnailPreview}
+                        alt="Thumbnail preview"
+                        className="rounded object-cover"
+                        fill
+                      />
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
             <Button disabled={isSubmitting} type="submit" className="mt-4">
@@ -272,6 +388,32 @@ export default function VideosSection() {
                       required
                     />
                   </div>
+                  <div className="flex flex-col space-y-1.5">
+                    <Label htmlFor="editThumbnail">Thumbnail Image</Label>
+                    <div className="flex flex-col gap-4">
+                      <Input
+                        id="editThumbnail"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleEditThumbnailChange}
+                        className="cursor-pointer"
+                      />
+                      {(editThumbnailPreview || editingItem.thumbnailUrl) && (
+                        <div className="relative w-48 h-32">
+                          <Image
+                            src={
+                              editThumbnailPreview || editingItem.thumbnailUrl
+                            }
+                            width={280}
+                            height={280}
+                            alt="Thumbnail preview"
+                            className="rounded object-cover"
+     
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
                 <DialogFooter className="mt-4">
                   <Button disabled={isSubmitting} type="submit">
@@ -317,13 +459,26 @@ export default function VideosSection() {
                           {...provided.dragHandleProps}
                           className="mb-4"
                         >
-                          <Card className='shadow-none rounded-md '>
+                          <Card className="shadow-none rounded-md">
                             <CardContent className="flex justify-between items-center p-4">
-                              <div>
-                                <h3 className="font-semibold">{link.title}</h3>
-                                <p className="text-sm text-gray-500">
-                                  {link.url}
-                                </p>
+                              <div className="flex items-center gap-4">
+                                {link.thumbnailUrl && (
+                                  <Image
+                                    src={link.thumbnailUrl}
+                                    width={200}
+                                    height={200}
+                                    alt={link.title}
+                                    className="h-16 w-24 object-cover rounded"
+                                  />
+                                )}
+                                <div>
+                                  <h3 className="font-semibold">
+                                    {link.title}
+                                  </h3>
+                                  <p className="text-sm text-gray-500">
+                                    {link.url}
+                                  </p>
+                                </div>
                               </div>
                               <div className="flex space-x-2">
                                 <Button

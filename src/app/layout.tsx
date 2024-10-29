@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { ClerkProvider } from '@clerk/nextjs';
 import { Poppins } from 'next/font/google';
+import SectionImageConextProvider from '@/sectionImageConext/sectionImageConext';
 
 export const metadata: Metadata = {
   title: 'Bike LPG',
@@ -20,13 +21,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
- 
-        <ClerkProvider>
+      <ClerkProvider>
+        <SectionImageConextProvider>
           <body className={`${poppins.className}  antialiased`}>
             {children}
           </body>
-        </ClerkProvider>
-
+        </SectionImageConextProvider>
+      </ClerkProvider>
     </html>
   );
 }

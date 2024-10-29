@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { MapPin, Clock, Phone } from 'lucide-react';
 import Container from '../LocalUi/container/Container';
 import { Skeleton } from '../ui/skeleton';
+import { useSectionImages } from '@/sectionImageConext/sectionImageConext';
 
 interface ContactData {
   id?: string;
@@ -48,13 +49,14 @@ const InfoCard = ({
 
 export default function FillingStation() {
   const [contacts, setContacts] = useState({} as ContactData);
+  const { fillingStationSection, isLoading } = useSectionImages();
 
   useEffect(() => {
     async function fetchData() {
       try {
         const response = await fetch('/api/contacts');
         const data = await response.json();
-        
+
         setContacts(data[1]);
       } catch (error) {
         console.error('Failed to fetch data:', error);
@@ -91,12 +93,19 @@ export default function FillingStation() {
               transition={{ duration: 0.7 }}
               className="relative h-[400px] rounded-2xl overflow-hidden shadow-lg"
             >
-              <Image
-                src="/fillingst.jpg"
-                alt="MS Jannat Filling Station"
-                fill
-                className="object-cover"
-              />
+              {fillingStationSection?.imageUrl && (
+                <Image
+                  src={fillingStationSection?.imageUrl}
+                  alt="MS Jannat Filling Station"
+                  fill
+                  className="object-cover"
+                />
+              )}
+              {
+                isLoading && (
+                  <Skeleton className="h-full w-full"></Skeleton>
+                )
+              }
             </motion.div>
 
             <motion.div

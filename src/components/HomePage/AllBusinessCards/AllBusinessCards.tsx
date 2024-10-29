@@ -12,40 +12,50 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import {  Bike, Fuel, Home } from 'lucide-react';
+import { Bike, Fuel, Home } from 'lucide-react';
 import Container from '@/components/LocalUi/container/Container';
- const businesses = [
-   {
-     name: 'M/S Jannat Petroleum',
-     description:
-       'Providing fuel solutions with our filling station for convenient access.',
-     icon: Fuel, // Update with an appropriate icon
-     color: 'text-blue-500',
-     link: '/site/jannat-petroleum',
-     images: '/filling.jpg', // Update with an appropriate image path
-   },
-   {
-     name: 'Bike LPG',
-     description:
-       'Innovative kits to convert bikes to LPG for eco-friendly fuel efficiency.',
-     icon: Bike, // Update with an appropriate icon
-     color: 'text-red-500',
-     link: '/bike-lpg',
-     images: '/bike.jpg', // Update with an appropriate image path
-   },
-   {
-     name: 'SR Design House',
-     description:
-       'Expert interior design and furniture solutions for every space.',
-     icon: Home, // Update with an appropriate icon
-     color: 'text-green-500',
-     link: '/site/sr-design-house',
-     images: '/fur.jpg', // Update with an appropriate image path
-   },
- ];
+import { useSectionImages } from '@/sectionImageConext/sectionImageConext';
+import { Skeleton } from '@/components/ui/skeleton';
+const businesses = [
+  {
+    name: 'M/S Jannat Petroleum',
+    description:
+      'Providing fuel solutions with our filling station for convenient access.',
+    icon: Fuel, // Update with an appropriate icon
+    color: 'text-blue-500',
+    link: '/site/jannat-petroleum',
+    images: 'filling', // Update with an appropriate image path
+  },
+  {
+    name: 'Bike LPG',
+    description:
+      'Innovative kits to convert bikes to LPG for eco-friendly fuel efficiency.',
+    icon: Bike, // Update with an appropriate icon
+    color: 'text-red-500',
+    link: '/bike-lpg',
+    images: 'bike', // Update with an appropriate image path
+  },
+  {
+    name: 'SR Design House',
+    description:
+      'Expert interior design and furniture solutions for every space.',
+    icon: Home, // Update with an appropriate icon
+    color: 'text-green-500',
+    link: '/site/sr-design-house',
+    images: 'fur', // Update with an appropriate image path
+  },
+];
 
+const AnimatedCard = ({
+  business,
+  index,
+}: {
+  business: (typeof businesses)[number];
+  index: number;
+}) => {
+  const { fillingStationCard, designHouseCard, bikeLpgCard, isLoading } =
+    useSectionImages();
 
-const AnimatedCard = ({ business, index } :{ business: typeof businesses[number], index: number}) => {
   const controls = useAnimation();
   const ref = useRef(null);
   const inView = useInView(ref, {
@@ -87,13 +97,23 @@ const AnimatedCard = ({ business, index } :{ business: typeof businesses[number]
             <business.icon className="w-6 h-6" />
           </motion.div>
           <div className="mb-2">
-            <Image
-              src={business.images}
-              className="w-full rounded-xl mb-2"
-              alt="logo"
-              width={400}
-              height={100}
-            />
+            {isLoading ? (
+              <Skeleton className="w-full h-[400px] rounded-xl" />
+            ) : (
+              <Image
+                src={`${
+                  business.images === 'filling'
+                    ? fillingStationCard?.imageUrl
+                    : business.images === 'bike'
+                    ? bikeLpgCard?.imageUrl
+                    : designHouseCard?.imageUrl
+                }`}
+                className="w-full rounded-xl mb-2"
+                alt={business.name}
+                width={400}
+                height={100}
+              />
+            )}
           </div>
           <CardTitle className="mt-5">{business.name}</CardTitle>
           <CardDescription>{business.description}</CardDescription>
@@ -109,8 +129,6 @@ const AnimatedCard = ({ business, index } :{ business: typeof businesses[number]
 };
 
 export default function AllBusinessCards() {
-
-
   return (
     <Container>
       <section className="bg-background py-12 ">

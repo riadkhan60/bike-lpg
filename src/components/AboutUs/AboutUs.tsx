@@ -5,17 +5,16 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Clock,  } from 'lucide-react';
+import { ArrowRight,   } from 'lucide-react';
 import Container from '../LocalUi/container/Container';
-import { timeline, values } from '@/constants/AboutConstant';
+import {  values } from '@/constants/AboutConstant';
 import TeamSection from './TeamSection';
+import MileStone from './MileStone';
+import { useSectionImages } from '@/sectionImageConext/sectionImageConext';
+import { Skeleton } from '../ui/skeleton';
 
 // Smoother animation configs
-const fadeInUp = {
-  initial: { opacity: 0, y: 10 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.4, ease: 'easeOut' },
-};
+
 
 const containerVariants = {
   initial: { opacity: 0 },
@@ -29,21 +28,7 @@ const containerVariants = {
 };
 
 
-const TimelineItem = ({ year, event }: { year: string; event: string }) => (
-  <motion.div
-    variants={fadeInUp}
-    className="flex items-center mb-8 group"
-    layout
-  >
-    <div className="bg-primary/10 text-primary rounded-full p-3 mr-4 group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300">
-      <Clock className="w-6 h-6" />
-    </div>
-    <div>
-      <h3 className="text-lg font-semibold">{year}</h3>
-      <p className="text-muted-foreground">{event}</p>
-    </div>
-  </motion.div>
-);
+
 
 const ValueCard = ({
   icon: Icon,
@@ -75,6 +60,7 @@ const ValueCard = ({
 );
 
 export default function AboutUsPage() {
+  const { officePicture, isLoading } = useSectionImages();
   return (
     <div className="min-h-screen bg-background">
       <Container>
@@ -127,14 +113,14 @@ export default function AboutUsPage() {
               transition={{ duration: 0.3 }}
               className="relative w-full aspect-[3/2]"
             >
-              <Image
-                src="/office.png"
+              {isLoading || !officePicture ? <Skeleton className="h-full w-full" /> : <Image
+                src={officePicture?.imageUrl}
                 alt="MS Jannat Traders Office"
                 fill
                 className="rounded-2xl shadow-lg object-cover"
                 sizes="(max-width: 768px) 100vw, 50vw"
                 priority
-              />
+              />}
             </motion.div>
           </motion.div>
 
@@ -156,31 +142,7 @@ export default function AboutUsPage() {
           </motion.div>
 
           {/* Journey Section */}
-          <motion.div
-            variants={containerVariants}
-            initial="initial"
-            animate="animate"
-            className="space-y-12"
-          >
-            <h2 className="text-3xl max-md:text-2xl font-bold text-center text-primary">
-              Our Journey
-            </h2>
-            <div className="max-w-3xl mx-auto">
-              <motion.div
-                variants={containerVariants}
-                initial="initial"
-                animate="animate"
-              >
-                {timeline.map((item, index) => (
-                  <TimelineItem
-                    key={index}
-                    year={item.year}
-                    event={item.event}
-                  />
-                ))}
-              </motion.div>
-            </div>
-          </motion.div>
+          <MileStone/>
 
           {/* Team Section */}
           <TeamSection/>

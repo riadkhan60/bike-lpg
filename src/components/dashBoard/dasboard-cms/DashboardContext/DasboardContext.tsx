@@ -4,6 +4,7 @@ import React, { createContext, useCallback } from 'react';
 interface VideoLink {
   id: string;
   title: string;
+  thumbnailUrl: string;
   url: string;
   order: number;
 }
