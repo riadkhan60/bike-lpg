@@ -17,7 +17,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { useDashboardContext } from './DashboardContext/DasboardContext';
+import { useDashboardContext } from '../DashboardContext/DasboardContext';
 
 interface Product {
   id: string;

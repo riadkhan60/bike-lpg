@@ -50,13 +50,21 @@ const initialSlides: Slide[] = [
         </motion.div>
         <div className="relative z-10 flex h-full items-center justify-center px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col items-center justify-center text-center">
+            <motion.h2
+              initial={{ y: 50, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="mb-4 max-sm:mb-2 text-[16px] font-extrabold tracking-tight text-white sm:text-xl md:text-2xl"
+            >
+              Converting to LPG
+            </motion.h2>
             <motion.h1
               initial={{ y: 50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.2 }}
               className="mb-4 max-sm:mb-2 text-xl font-extrabold tracking-tight text-white sm:text-3xl md:text-6xl"
             >
-              New Step in Solution for your life
+              Will save 50% of your fuel cost
             </motion.h1>
             <motion.p
               initial={{ y: 50, opacity: 0 }}
@@ -64,8 +72,7 @@ const initialSlides: Slide[] = [
               transition={{ duration: 0.8, delay: 0.4 }}
               className="mb-8 max-md:mb-4 max-w-3xl max-md:w-[70%] text-[14px] text-gray-100 sm:text-2xl"
             >
-              We offer innovative solutions that simplify life, promote
-              sustainability, and support a eco-friendly future.
+              A one step Solution to your bike
             </motion.p>
             <motion.div
               initial={{ y: 50, opacity: 0 }}
@@ -73,23 +80,21 @@ const initialSlides: Slide[] = [
               transition={{ duration: 0.8, delay: 0.6 }}
               className="flex flex-col items-center justify-center space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0"
             >
-              <Button
-                size="lg"
-                className="bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 hover:scale-105"
-              >
-                <Link href={'/bike-lpg'} className='flex items-center'>
-                Bike LPG
-                <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
-              </Button>
+              <a href={'#videos'} className="flex items-center">
+                <Button
+                  size="lg"
+                  className="bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 hover:scale-105"
+                >
+                  watch videos
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </a>
               <Button
                 size="lg"
                 variant="outline"
                 className="bg-white text-gray-900 hover:bg-gray-100 transition-all duration-300 hover:scale-105"
               >
-                <Link href={'/site/contact-us'}>
-                Contact Us
-                </Link>
+                <Link href={'/site/contact-us'}>Contact Us</Link>
               </Button>
             </motion.div>
           </div>
@@ -1305,7 +1310,6 @@ export default function BikeLpgBanner() {
 //     </div>
 //   );
 // }
-
 
 // v5
 // 'use client';

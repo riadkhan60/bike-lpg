@@ -143,3 +143,19 @@ model Section {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
+model FeaturedProduct {
+  id          String    @id @default(uuid())
+  title       String
+  description String
+  imageUrl    String
+  features    Feature[]
+}
+
+model Feature {
+  id            String          @id @default(uuid())
+  title         String
+  description   String
+  featuredProductId String
+  featuredProduct FeaturedProduct @relation(fields: [featuredProductId], references: [id])
+}

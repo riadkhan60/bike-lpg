@@ -78,7 +78,7 @@ export default function FillingStation() {
             className="text-center max-w-4xl mx-auto"
           >
             <h1 className="text-5xl max-md:text-3xl font-bold leading-[1.2] mb-4 bg-clip-text text-transparent bg-gradient-to-r from-[#7a462a] to-[#FF9900]">
-              MS Jannat Filling Station
+              Jannat Petroleum
             </h1>
             <p className="text-xl text-muted-foreground">
               Your trusted destination for quality fuel and exceptional service

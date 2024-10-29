@@ -24,7 +24,7 @@ export default function BikeLpgNavigation() {
             <div className="flex h-16 items-center justify-between mx-auto">
               {/* Mobile Logo & Menu */}
               <div className="flex items-center justify-between w-full xl:hidden">
-                <Link href="/" className="flex items-center">
+                <Link href="/bike-lpg" className="flex items-center">
                   <Image
                     src={
                       'https://res.cloudinary.com/dpha3d1cu/image/upload/v1729952292/Bike_LPG_PNG-removebg_zyprzu.png'
@@ -56,7 +56,7 @@ export default function BikeLpgNavigation() {
               {/* Desktop Navigation */}
               <div className="hidden xl:flex w-full items-center">
                 {/* Left Logo */}
-                <Link href="/" className="mr-8">
+                <Link href="/bike-lpg" className="mr-8">
                   <Image
                     src={
                       'https://res.cloudinary.com/dpha3d1cu/image/upload/v1729952292/Bike_LPG_PNG-removebg_zyprzu.png'

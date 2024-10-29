@@ -5,7 +5,6 @@ import Sidebar from './Sidebar';
 import Dashboard from './Dashboard';
 import QASection from './QASection';
 import VideosSection from './VideosSection';
-import ProductsSection from './ProductsSection';
 import BannersSection from './BannersSection';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import DasboardContextProvider, {
@@ -18,6 +17,7 @@ import EmailLists from './EmailLists/EmailLists';
 import FormResponseList from './FormResponseList/FormResponseList';
 import Company from './Company/Company';
 import TeamMembers from './TeamMembers/TeamMembers';
+import Products from './Products/Products';
 
 export default function CMSAdminPanel() {
   return (
@@ -91,7 +91,7 @@ function Panel() {
             <VideosSection />
           </TabsContent>
           <TabsContent value="products">
-            <ProductsSection />
+            <Products />
           </TabsContent>
           <TabsContent value="banners">
             <BannersSection />

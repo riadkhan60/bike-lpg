@@ -87,9 +87,9 @@ export default function FooterElements({
                 About MS Jannat Traders
               </h3>
               <p className="text-sm">
-                Leading the way in LPG technology, fuel stations, and furniture
-                solutions. {"We're"} committed to innovation and sustainability
-                in all our ventures.
+                Leading the way in LPG technology all over the Bangladesh.{' '}
+                {"We're"} committed to innovation and sustainability in all our
+                ventures.
               </p>
             </motion.div>
             <motion.div variants={itemVariants} className="space-y-4">
@@ -97,13 +97,18 @@ export default function FooterElements({
                 Quick Links
               </h3>
               <ul className="space-y-2">
-                {['Home', 'About Us', 'Services', 'Contact'].map((item) => (
-                  <li key={item}>
+                {[
+                  { label: 'Home', href: '/' },
+                  { label: 'Our Products', href: '/bike-lpg/our-products' },
+                  { label: 'About Us', href: '/site/about-us' },
+                  { label: 'Contact Us', href: '/site/contact-us' },
+                ].map((item) => (
+                  <li key={item.label}>
                     <Link
-                      href="#"
+                      href={item.href}
                       className="text-sm hover:text-primary transition-colors"
                     >
-                      {item}
+                      {item.label}
                     </Link>
                   </li>
                 ))}
@@ -118,16 +123,25 @@ export default function FooterElements({
               </h3>
               <ul className="space-y-2">
                 {[
-                  'Bike LPG',
-                  'MR Filling Station',
-                  'MS Furniture & Interior',
+                  {
+                    label: 'Bike Lpg',
+                    href: '/bike-lpg',
+                  },
+                  {
+                    label: 'Jannat Petroleum',
+                    href: '/site/jannat-petroleum',
+                  },
+                  {
+                    label: 'Sr Design House',
+                    href: '/site/sr-design-house',
+                  },
                 ].map((item) => (
-                  <li key={item}>
+                  <li key={item.label}>
                     <Link
-                      href="#"
+                      href={item.href}
                       className="text-sm hover:text-primary transition-colors"
                     >
-                      {item}
+                      {item.label}
                     </Link>
                   </li>
                 ))}

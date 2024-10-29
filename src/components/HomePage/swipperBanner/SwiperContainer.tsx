@@ -73,24 +73,24 @@ const initialSlides: Slide[] = [
               transition={{ duration: 0.8, delay: 0.6 }}
               className="flex flex-col items-center justify-center space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0"
             >
-              <Button
-                size="lg"
-                className="bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 hover:scale-105"
-              >
-                <Link href={'/bike-lpg'} className='flex items-center'>
-                Bike LPG
-                <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="bg-white text-gray-900 hover:bg-gray-100 transition-all duration-300 hover:scale-105"
-              >
-                <Link href={'/site/contact-us'}>
-                Contact Us
-                </Link>
-              </Button>
+              <Link href={'/bike-lpg'} className="">
+                <Button
+                  size="lg"
+                  className="bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 hover:scale-105"
+                >
+                  Bike LPG
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+              <Link href={'/site/contact-us'}>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="bg-white text-gray-900 hover:bg-gray-100 transition-all duration-300 hover:scale-105"
+                >
+                  Contact Us
+                </Button>
+              </Link>
             </motion.div>
           </div>
         </div>
@@ -1305,7 +1305,6 @@ export default function EnhancedSwiperContainer() {
 //     </div>
 //   );
 // }
-
 
 // v5
 // 'use client';

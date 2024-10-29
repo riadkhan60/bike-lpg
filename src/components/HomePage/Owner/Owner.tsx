@@ -98,7 +98,7 @@ export default function Owner() {
                 variants={itemVariants}
                 className="text-gray-600 dark:text-gray-300 leading-relaxed"
               >
-                For over two decades, Mr. Jannat has been pioneering innovation
+                For over two decades, Mr. Shafik Islam has been pioneering innovation
                 in the automotive and home decor industries. His visionary
                 leadership has propelled MS Jannat Traders from a modest local
                 enterprise into a diversified powerhouse with multiple thriving
@@ -126,7 +126,7 @@ export default function Owner() {
                   {[
                     'Pioneered Bike LPG conversion technology in the region',
                     'Expanded MS Jannat Traders into multiple successful business verticals',
-                    "Received the prestigious 'Entrepreneur of the Year' award in 2022",
+                    "Renowned for our commitment to sustainability and eco-friendly practices",
                     'Spearheaded initiatives for sustainable business practices across all company operations',
                   ].map((achievement, index) => (
                     <motion.li

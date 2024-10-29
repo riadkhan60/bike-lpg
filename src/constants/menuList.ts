@@ -1,7 +1,7 @@
 export const mobileMenuList = [
   {
     id: 1,
-    name: 'M/S Jannat Petroleum',
+    name: 'Jannat Petroleum',
     path: '/',
   },
   {
@@ -14,7 +14,7 @@ export const mobileMenuList = [
 export const desktopMenuListLeft = [
   {
     id: 1,
-    name: 'M/S Jannat Petroleum',
+    name: 'Jannat Petroleum',
     path: '/site/jannat-petroleum',
   },
   {
@@ -24,7 +24,7 @@ export const desktopMenuListLeft = [
   },
   {
     id: 3,
-    name: 'BikeLPG',
+    name: 'Bike LPG',
     path: '/bike-lpg',
   },
 ];
@@ -53,6 +53,11 @@ export const BIKE_LPG_MENU = [
     path: '/',
   },
   {
+    id: 22,
+    name: 'Bike Lpg',
+    path: '/bike-lpg',
+  },
+  {
     id: 2,
     name: 'Our Products',
     path: '/bike-lpg/our-products',
@@ -60,7 +65,7 @@ export const BIKE_LPG_MENU = [
   {
     id: 3,
     name: 'Why us',
-    path: '/site/our-services',
+    path: '/site/why-us',
   },
   {
     id: 4,
@@ -68,7 +73,7 @@ export const BIKE_LPG_MENU = [
     path: '/site/about-us',
   },
   {
-    id: 4,
+    id: 5,
     name: 'Contact us',
     path: '/site/contact-us',
   },

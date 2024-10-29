@@ -141,13 +141,20 @@ export default function FurnitureHouse() {
               innovative furniture design and exceptional interior solutions
             </p>
             <div className="flex max-md:flex-col justify-center gap-4">
-              <Button size="lg" className="bg-primary text-primary-foreground">
-                <a href={contacts?.facebook}>View Portfolio</a>
-                <ArrowRight className="ml-2 w-4 h-4" />
-              </Button>
-              <Button size="lg" variant="outline">
-                <Link href={'/site/contact-us'}>Book Consultation</Link>
-              </Button>
+              <a href={contacts?.facebook} target="_blank">
+                <Button
+                  size="lg"
+                  className="bg-primary text-primary-foreground"
+                >
+                  View Portfolio
+                  <ArrowRight className="ml-2 w-4 h-4" />
+                </Button>
+              </a>
+              <Link href={'/site/contact-us'}>
+                <Button size="lg" variant="outline">
+                  Book Consultation
+                </Button>
+              </Link>
             </div>
           </motion.div>
 
@@ -249,12 +256,12 @@ export default function FurnitureHouse() {
                 <Phone className="w-5 h-5 text-primary" />
                 <span>{contacts?.phone}</span>
               </div>
-              <Button className="bg-primary text-primary-foreground">
-                <a className="flex" href={`tel:${contacts?.phone}`}>
+              <a className="flex" href={`tel:${contacts?.phone}`}>
+                <Button className="bg-primary text-primary-foreground">
                   Schedule a Visit
                   <ArrowRight className="ml-2 w-4 h-4" />
-                </a>
-              </Button>
+                </Button>
+              </a>
             </div>
           </motion.div>
         </main>

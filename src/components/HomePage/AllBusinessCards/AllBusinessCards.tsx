@@ -18,7 +18,7 @@ import { useSectionImages } from '@/sectionImageConext/sectionImageConext';
 import { Skeleton } from '@/components/ui/skeleton';
 const businesses = [
   {
-    name: 'M/S Jannat Petroleum',
+    name: 'Jannat Petroleum',
     description:
       'Providing fuel solutions with our filling station for convenient access.',
     icon: Fuel, // Update with an appropriate icon
