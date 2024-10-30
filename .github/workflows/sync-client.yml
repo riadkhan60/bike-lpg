@@ -14,7 +14,7 @@ jobs:
 
       - name: Push to Client's Private Repository
         env:
-          CLIENT_REPO_URL: https://bikelpg:${{ secrets.CLIENT_PAT }}@github.com/bikelpg/bikelpg20.git
+          CLIENT_REPO_URL: https://bikelpg:${{ secrets.CLIENT_PAT }}@github.com/bikelpg/bike10.git
         run: |
           git remote add client $CLIENT_REPO_URL
           git push client main --force
