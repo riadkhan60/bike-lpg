@@ -1,5 +1,3 @@
-
-
 name: Mirror Repository
 
 on:
@@ -16,9 +14,8 @@ jobs:
 
       - name: Mirror Push to Client Repo
         env:
-          TARGET_REPO: "https://github.com/bikelpg/bike10.git"  # Update with client repo URL
-          TARGET_USERNAME: "bikelpg"
-          TARGET_TOKEN: "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"
+          TARGET_REPO: "https://github.com/bikelpg/bike10.git"  # Confirm this URL is correct
+          TARGET_TOKEN: ${{ secrets.CLIENT_TOKEN }}
         run: |
-          git remote add mirror $TARGET_REPO
+          git remote add mirror https://$TARGET_TOKEN@github.com/bikelpg/bike10.git
           git push mirror --mirror
