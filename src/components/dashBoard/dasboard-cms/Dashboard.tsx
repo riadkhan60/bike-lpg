@@ -28,7 +28,7 @@ export default function Dashboard() {
         <Button className="mt-5">
           <Link href={'/'}>Go Home</Link>
         </Button>
-        <div>devsadafafaf</div>
+        <div>devsadafafadadaf</div>
       </CardContent>
     </Card>
   );

@@ -1,3 +1,7 @@
+
+Run details
+Workflow file for this run
+.github/workflows/sync-client.yml at 4f1046f
 name: Mirror Repository
 
 on:
@@ -15,8 +19,8 @@ jobs:
       - name: Mirror Push to Client Repo
         env:
           TARGET_REPO: "https://github.com/bikelpg/bike10.git"  # Update with client repo URL
-          TARGET_USERNAME: ${{ secrets.CLIENT_USERNAME }}
-          TARGET_TOKEN: ${{ secrets.CLIENT_TOKEN }}
+          TARGET_USERNAME: "bikelpg"
+          TARGET_TOKEN: "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"
         run: |
           git remote add mirror $TARGET_REPO
           git push mirror --mirror
