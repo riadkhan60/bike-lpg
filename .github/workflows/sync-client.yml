@@ -1,0 +1,41 @@
+name: Sync to Client Repository
+
+on:
+  push:
+    branches:
+      - main  # or whatever your default branch is
+    paths-ignore:
+      - '.github/**'  # Prevent workflow loops
+      - 'README.md'   # Ignore README changes
+      
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  # Fetch all history for proper syncing
+          
+      - name: Configure Git
+        run: |
+          git config --global user.name 'GitHub Action'
+          git config --global user.email 'action@github.com'
+          
+      - name: Add client remote
+        run: |
+          # Replace CLIENT_USERNAME and REPO_NAME with actual values
+          git remote add client https://${{ secrets.CLIENT_PAT }}github.com/bikelpg/bikelpg20.git
+          
+      - name: Push to client repository
+        run: |
+          # Force push to ensure repos stay in sync
+          git push client main:main --force
+          
+      - name: Notify on success
+        if: success()
+        run: echo "Successfully synced repository to client's GitHub"
+        
+      - name: Notify on failure
+        if: failure()
+        run: echo "Failed to sync repository"
