@@ -1,20 +1,22 @@
-name: Mirror Repository to Client's Repo
+name: Mirror Repository
 
 on:
   push:
     branches:
-      - main  # Specify the branch you want to mirror
+      - main  # Trigger the action on pushes to the main branch
 
 jobs:
   mirror:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v2
 
-      - name: Push to Client's Private Repository
+      - name: Mirror Push to Client Repo
         env:
-          CLIENT_REPO_URL: https://bikelpg:${{ secrets.CLIENT_PAT }}@github.com/bikelpg/bike10.git
+          TARGET_REPO: "https://github.com/bikelpg/bike10.git"  # Update with client repo URL
+          TARGET_USERNAME: ${{ secrets.CLIENT_USERNAME }}
+          TARGET_TOKEN: ${{ secrets.CLIENT_TOKEN }}
         run: |
-          git remote add client $CLIENT_REPO_URL
-          git push client main --force
+          git remote add mirror $TARGET_REPO
+          git push mirror --mirror
