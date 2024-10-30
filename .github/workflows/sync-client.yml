@@ -1,39 +1,20 @@
-name: Sync to Client Repository
+name: Mirror Repository to Client's Repo
 
 on:
   push:
     branches:
-      - main
-    paths-ignore:
-      - '.github/**'
-      - 'README.md'
-      
+      - main  # Specify the branch you want to mirror
+
 jobs:
-  sync:
+  mirror:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-          
-      - name: Configure Git
+
+      - name: Push to Client's Private Repository
+        env:
+          CLIENT_REPO_URL: https://bikelpg:${{ secrets.CLIENT_PAT }}@github.com/bikelpg/bikelpg20.git
         run: |
-          git config --global user.name 'GitHub Action'
-          git config --global user.email 'action@github.com'
-          
-      - name: Add client remote
-        run: |
-          git remote add client https://${{ secrets.CLIENT_PAT }}@github.com/bikelpg/bikelpg20.git
-          
-      - name: Push to client repository
-        run: |
-          git push client main:main --force
-          
-      - name: Notify on success
-        if: success()
-        run: echo "Successfully synced repository to client's GitHub"
-        
-      - name: Notify on failure
-        if: failure()
-        run: echo "Failed to sync repository"
+          git remote add client $CLIENT_REPO_URL
+          git push client main --force
