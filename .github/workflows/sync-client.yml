@@ -25,7 +25,7 @@ jobs:
       - name: Add client remote
         run: |
           # Replace CLIENT_USERNAME and REPO_NAME with actual values
-          git remote add client https://${{ secrets.CLIENT_PAT }}github.com/bikelpg/bikelpg20.git
+          git remote add client https://${secrets.CLIENT_PAT}github.com/bikelpg/bikelpg20.git
           
       - name: Push to client repository
         run: |
