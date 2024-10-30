@@ -1,7 +1,5 @@
 
-Run details
-Workflow file for this run
-.github/workflows/sync-client.yml at 4f1046f
+
 name: Mirror Repository
 
 on:
