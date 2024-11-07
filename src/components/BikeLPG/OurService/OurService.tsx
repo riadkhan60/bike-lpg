@@ -381,7 +381,7 @@ export default function OurService() {
             <Link href={'/site/contact-us'}>
               <Button
                 size="lg"
-                className="bg-primary text-primary-foreground hover:bg-primary/90"
+                className=" text-primary-foreground bg-brand hover:bg-brand/80"
               >
                 Start Your LPG Journey <ChevronRight className="ml-2 h-4 w-4" />
               </Button>

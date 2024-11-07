@@ -113,14 +113,18 @@ export default function AboutUsPage() {
               transition={{ duration: 0.3 }}
               className="relative w-full aspect-[3/2]"
             >
-              {isLoading || !officePicture ? <Skeleton className="h-full w-full" /> : <Image
-                src={officePicture?.imageUrl}
-                alt="MS Jannat Traders Office"
-                fill
-                className="rounded-2xl shadow-lg object-cover"
-                sizes="(max-width: 768px) 100vw, 50vw"
-                priority
-              />}
+              {isLoading || !officePicture ? (
+                <Skeleton className="h-full w-full" />
+              ) : (
+                <Image
+                  src={officePicture?.imageUrl}
+                  alt="MS Jannat Traders Office"
+                  fill
+                  className="rounded-2xl shadow-lg object-cover"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  priority
+                />
+              )}
             </motion.div>
           </motion.div>
 
@@ -142,10 +146,10 @@ export default function AboutUsPage() {
           </motion.div>
 
           {/* Journey Section */}
-          <MileStone/>
+          <MileStone />
 
           {/* Team Section */}
-          <TeamSection/>
+          <TeamSection />
 
           {/* CTA Section */}
           <motion.div
@@ -163,9 +167,13 @@ export default function AboutUsPage() {
 
             <Button
               size="lg"
-              className="bg-primary text-primary-foreground hover:bg-primary/90"
+              className="bg-primary text-primary-foreground bg-brand hover:bg-brand/80"
             >
-              <a className='flex items-center' href="https://www.facebook.com/@bikelpg0" target="_blank">
+              <a
+                className="flex items-center"
+                href="https://www.facebook.com/@bikelpg0"
+                target="_blank"
+              >
                 Explore Opportunities
                 <ArrowRight className="ml-2 h-5 w-5" />
               </a>

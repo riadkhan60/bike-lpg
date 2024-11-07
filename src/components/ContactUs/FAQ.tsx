@@ -118,7 +118,7 @@ export default function FAQSection({number}: {number: string | number | undefine
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
-                  <Button type="submit">Search</Button>
+                  <Button className='bg-brand hover:bg-brand/80' type="submit">Search</Button>
                 </form>
               </CardContent>
             </Card>

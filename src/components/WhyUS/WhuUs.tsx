@@ -156,8 +156,8 @@ export default function WhyUs() {
               Why Choose MS Jannat Traders?
             </h1>
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-              Discover why{" we're"} the preferred choice for doing business with
-              us.
+              Discover why{" we're"} the preferred choice for doing business
+              with us.
             </p>
           </motion.div>
 
@@ -195,7 +195,7 @@ export default function WhyUs() {
             <Link href={'/site/contact-us'}>
               <Button
                 size="lg"
-                className="bg-primary text-primary-foreground hover:bg-primary/90"
+                className=" text-primary-foreground bg-brand hover:bg-brand/80"
               >
                 Contact Us Today
                 <ArrowRight className="ml-2 h-5 w-5" />

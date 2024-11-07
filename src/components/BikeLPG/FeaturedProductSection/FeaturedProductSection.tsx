@@ -402,7 +402,7 @@ export default function Component() {
                     contacts.whatsapp || '8801632102050'
                   }?text=Hello%2C%20I%27m%20interested%20in%20your%20services%21`}
                 >
-                  <Button className="inline-flex h-10 items-center justify-center rounded-md bg-gray-900 px-8 text-sm font-medium text-gray-50 shadow transition-colors hover:bg-gray-900/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-950 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-50/90 dark:focus-visible:ring-gray-300">
+                  <Button className="inline-flex h-10 items-center justify-center rounded-md  px-8 text-sm font-medium text-gray-50 shadow transition-colors bg-brand hover:bg-brand/80 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-950 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-50/90 dark:focus-visible:ring-gray-300">
                     {"Let's talk"}
                   </Button>
                 </a>
@@ -505,13 +505,13 @@ export default function Component() {
             </AnimatePresence>
           </motion.div>
           <motion.div
-            className="mt-12 text-center"
+            className="mt-16 max-md:mt-12 text-center"
             variants={itemVariants}
             whileHover={{ scale: 1.05 }}
             transition={{ type: 'spring', stiffness: 400, damping: 10 }}
           >
             <Link href={'/bike-lpg/our-products'}>
-              <Button className="inline-flex h-10 items-center justify-center rounded-md bg-gray-900 px-8 text-sm font-medium text-gray-50 shadow transition-colors hover:bg-gray-900/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-950 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-50/90 dark:focus-visible:ring-gray-300">
+              <Button className="inline-flex py-[40px] items-center justify-center rounded-lg px-8 text-4xl max-sm:text-2xl font-medium text-gray-50 shadow transition-colors bg-brand hover:bg-brand/80 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-950 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-50/90 dark:focus-visible:ring-gray-300">
                 Explore Full Catalog <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
