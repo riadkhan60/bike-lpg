@@ -160,6 +160,15 @@ export const metadata: Metadata = {
     locale: 'bn-BD',
     siteName: 'Ms Jannat Traders',
   },
+  twitter: {
+    card: 'summary_large_image', // Type of Twitter card. Other options: 'summary', 'app', 'player'
+    site: '@MsJannatTraders', // Twitter handle for the website or organization
+    creator: '@shafikislam', // Twitter handle of the content creator
+    title: 'Bike Lpg - Leading Bike LPG Importer in Bangladesh',
+    description:
+      "Bike Lpg is Bangladesh's trusted distributor for LPG bike conversion kits with a wide dealer network and quality service.",
+    images: ['https://msjannattraders.com/data/opengraph-image.png'], // URL to a representative image for the page (should be at least 600x315 px for large image summary)
+  },
 };
 
 

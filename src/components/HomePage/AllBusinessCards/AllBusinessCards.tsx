@@ -119,7 +119,7 @@ const AnimatedCard = ({
           <CardDescription>{business.description}</CardDescription>
         </CardHeader>
         <CardFooter className="mt-auto">
-          <Button asChild className="w-full bg-brand hover:bg-brand/80">
+          <Button asChild className="w-full">
             <Link href={business.link}>Learn More</Link>
           </Button>
         </CardFooter>

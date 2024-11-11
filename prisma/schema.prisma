@@ -159,3 +159,11 @@ model Feature {
   featuredProductId String
   featuredProduct FeaturedProduct @relation(fields: [featuredProductId], references: [id])
 }
+
+model DownloadRequest {
+  id        String   @id @default(cuid())
+  pin       String
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}

@@ -26,9 +26,7 @@ export default function BikeLpgNavigation() {
               <div className="flex items-center justify-between w-full xl:hidden">
                 <Link href="/bike-lpg" className="flex items-center">
                   <Image
-                    src={
-                      'https://res.cloudinary.com/dpha3d1cu/image/upload/v1729952292/Bike_LPG_PNG-removebg_zyprzu.png'
-                    }
+                    src={'https://i.imgur.com/xWb3rAu.png'}
                     alt="Logo"
                     width={60}
                     height={60}
@@ -58,9 +56,7 @@ export default function BikeLpgNavigation() {
                 {/* Left Logo */}
                 <Link href="/bike-lpg" className="mr-8">
                   <Image
-                    src={
-                      'https://res.cloudinary.com/dpha3d1cu/image/upload/v1729952292/Bike_LPG_PNG-removebg_zyprzu.png'
-                    }
+                    src={'https://i.imgur.com/xWb3rAu.png'}
                     alt="Logo"
                     width={70}
                     height={70}

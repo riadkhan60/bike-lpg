@@ -165,13 +165,21 @@ export default function CreateSectionForm() {
             </button>
           </motion.div>
         )}
-        <Card className='flex flex-col gap-4 p-6'>
-          <h2 className=" text-2xl font-bold">This section is for the developer only</h2>
-          <p className='max-w-[500px] text-red-500 font-medium'>
-            This section is developed for developing purpose. {"Don't"} use it under
-            any circumstances until you know what you are doing.
+        <Card className="flex flex-col gap-4 p-6">
+          <h2 className=" text-2xl font-bold">
+            This section is for the developer only
+          </h2>
+          <p className="max-w-[500px] text-red-500 font-medium">
+            This section is developed for developing purpose. {"Don't"} use it
+            under any circumstances until you know what you are doing.
           </p>
-          <Image src={'https://res.cloudinary.com/dpha3d1cu/image/upload/v1730180838/pixeltrue-web-development_hpcek4.png'} alt="dev" width={500} height={500} priority />
+          <Image
+            src={'https://i.imgur.com/NPxlrPJ.png'}
+            alt="dev"
+            width={500}
+            height={500}
+            priority
+          />
         </Card>
       </div>
     </motion.div>

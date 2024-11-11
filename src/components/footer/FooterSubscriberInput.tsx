@@ -105,7 +105,7 @@ export default function FooterSubscriberInput() {
 
         <Button
           type="submit"
-          className="w-full bg-brand hover:bg-brand/80 text-white  transition-colors"
+          className="w-full bg-primary text-white hover:bg-primary/90 transition-colors"
           disabled={isDisabled}
         >
           {status === 'loading' ? (

@@ -194,7 +194,7 @@ const ProductCard: React.FC<{ product: Product; contacts: string }> = ({
             <a
               href={`https://wa.me/${contacts}?text=Hello,%20I'm%20interested%20in%20your%20services.%20Please%20tell%20me%20more%20about%20${product.name}`}
             >
-              <Button className="w-full bg-brand hover:bg-brand/80">
+              <Button className="w-full">
                 <ShoppingCart className="mr-2 h-4 w-4" /> Order now
               </Button>
             </a>

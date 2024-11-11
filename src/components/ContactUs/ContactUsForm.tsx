@@ -226,7 +226,7 @@ export default function ContactUsForm() {
 
         <Button
           type="submit"
-          className="w-full bg-brand hover:bg-brand/80"
+          className="w-full"
           disabled={isSubmitting || hasSubmittedInSession}
         >
           {isSubmitting ? (
